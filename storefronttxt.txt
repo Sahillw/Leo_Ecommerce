@@ -1,0 +1,2526 @@
+language: node_js
+os:
+ - linux
+node_js:
+  - "10.7"
+  - "9.11"
+  - "8.11"
+  - "7.10"
+  - "6.14"
+  - "5.12"
+  - "4.9"
+  - "iojs-v3.3"
+  - "iojs-v2.5"
+  - "iojs-v1.8"
+  - "0.12"
+  - "0.10"
+  - "0.8"
+before_install:
+  - 'case "${TRAVIS_NODE_VERSION}" in 0.*) export NPM_CONFIG_STRICT_SSL=false ;; esac'
+  - 'nvm install-latest-npm'
+install:
+  - 'if [ "${TRAVIS_NODE_VERSION}" = "0.6" ] || [ "${TRAVIS_NODE_VERSION}" = "0.9" ]; then nvm install --latest-npm 0.8 && npm install && nvm use "${TRAVIS_NODE_VERSION}"; else npm install; fi;'
+script:
+  - 'if [ -n "${PRETEST-}" ]; then npm run pretest ; fi'
+  - 'if [ -n "${POSTTEST-}" ]; then npm run posttest ; fi'
+  - 'if [ -n "${COVERAGE-}" ]; then npm run coverage ; fi'
+  - 'if [ -n "${TEST-}" ]; then npm run tests-only ; fi'
+sudo: false
+env:
+  - TEST=true
+matrix:
+  fast_finish: true
+  include:
+    - node_js: "lts/*"
+      env: PRETEST=true
+    - node_js: "lts/*"
+      env: POSTTEST=true
+    - node_js: "4"
+      env: COVERAGE=true
+    - node_js: "10.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "10.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.10"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "9.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.10"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "8.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "7.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.13"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.12"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.11"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.10"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "6.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.11"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.10"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "5.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.8"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "4.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v3.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v3.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v3.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v2.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v2.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v2.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v2.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v2.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.7"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.5"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.4"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.3"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.2"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.1"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "iojs-v1.0"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "0.11"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "0.9"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "0.6"
+      env: TEST=true ALLOW_FAILURE=true
+    - node_js: "0.4"
+      env: TEST=true ALLOW_FAILURE=true
+  allow_failures:
+    - os: osx
+    - env: TEST=true ALLOW_FAILURE=true
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/ent
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-errors
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/math-intrinsics
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/has-tostringtag
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+  - 0.10
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-list
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+tidelift: "npm/balanced-match"
+patreon: juliangruber
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/resolve
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/call-bind-apply-helpers
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+  - 0.8
+  - "0.10"language: node_js
+node_js:
+  - '0.10'
+  - '0.11'
+<script src="tslib.es6.js"></script><script src="tslib.js"></script><?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/ordered-binary.iml" filepath="$PROJECT_DIR$/.idea/ordered-binary.iml" />
+    </modules>
+  </component>
+</project># These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/function-bind
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-define-property
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/get-intrinsic
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+sudo: false
+language: node_js
+node_js:
+  - "4"
+  - "iojs"
+  - "0.12"
+  - "0.10"
+script:
+  - "npm run test-travis"
+after_script:
+  - "npm install coveralls@2 && cat coverage/lcov.info | coveralls"
+matrix:
+  fast_finish: true
+notifications:
+  irc:
+    channels:
+      - "irc.freenode.org#unshift"
+    on_success: change
+    on_failure: change
+github: [StefanTerdell]
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/qs
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/call-bound
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+parser: typescript
+printWidth: 120
+tabWidth: 2
+singleQuote: true
+trailingComma: nonelanguage: node_js
+node_js:
+  - 6
+  - 8
+  - 10
+  - 12
+  - stable
+
+before_script:
+  - npm install -g typescript
+  - tsc -p ./
+
+script: "npm run coveralls"# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/dunder-proto
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/hasown
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-weakmap
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+extends: eslint:recommended
+env:
+  node: true
+  browser: true
+rules:
+  block-scoped-var: 2
+  complexity: [2, 15]
+  curly: [2, multi-or-nest, consistent]
+  dot-location: [2, property]
+  dot-notation: 2
+  indent: [2, 2, SwitchCase: 1]
+  linebreak-style: [2, unix]
+  new-cap: 2
+  no-console: [2, allow: [warn, error]]
+  no-else-return: 2
+  no-eq-null: 2
+  no-fallthrough: 2
+  no-invalid-this: 2
+  no-return-assign: 2
+  no-shadow: 1
+  no-trailing-spaces: 2
+  no-use-before-define: [2, nofunc]
+  quotes: [2, single, avoid-escape]
+  semi: [2, always]
+  strict: [2, global]
+  valid-jsdoc: [2, requireReturn: false]
+  no-control-regex: 0
+parserOptions:
+  ecmaVersion: 6
+globals:
+  beforeEach: false
+  describe: false
+  it: false
+github: epoberezkin
+tidelift: "npm/json-schema-traverse"
+name: publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+      - run: npm install
+      - run: npm test
+      - name: Publish beta version to npm
+        if: "github.event.release.prerelease"
+        run: npm publish --tag beta
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to npm
+        if: "!github.event.release.prerelease"
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+name: build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm test
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/minimist
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+  - "0.10"
+  - "0.9"
+
+notifications:
+  email: false
+  irc:
+    - "irc.freenode.net#evilprobe"
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/supports-preserve-symlink-flag
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/has-symbols
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+repo_token: SIAeZjKYlHK74rbcFvNHMUzjRiMpflxve
+
+language: node_js
+node_js:
+  - "6"
+  - "5"
+  - "4"
+
+install:
+  - make node_modules
+
+script:
+  - make lint
+  - make test
+  - make coveralls
+<!DOCTYPE html>
+<!--
+The entry point for client. This file is loaded just once when the client is captured.
+It contains socket.io and all the communication logic.
+-->
+<html>
+<head>
+  %X_UA_COMPATIBLE%
+  <title>Karma</title>
+  <link href="favicon.ico" rel="icon" type="image/x-icon">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style type="text/css">
+    iframe {
+      height: 100%;
+      width: 100%;
+      border: 0;
+    }
+
+    html, body {
+      height: 100%;
+      padding: 0;
+      margin: 0;
+
+      font-family: sans-serif;
+    }
+
+    .offline {
+      background: #DDD;
+    }
+
+    .online {
+      background: #6C4;
+    }
+
+    .idle {
+    }
+
+    .executing {
+      background: #F99;
+    }
+
+    #banner {
+      padding: 5px 10px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+
+      list-style: none;
+    }
+
+    li {
+      padding: 5px 12px;
+    }
+
+    .btn-debug {
+      float: right;
+    }
+
+    .offline .btn-debug {
+      display: none;
+    }
+
+    .btn-debug {
+      -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      box-shadow:inset 0px 1px 0px 0px #ffffff;
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6) );
+      background:-moz-linear-gradient( center top, #ffffff 5%, #f6f6f6 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6');
+      background-color:#ffffff;
+      -moz-border-radius:6px;
+      -webkit-border-radius:6px;
+      border-radius:6px;
+      border:1px solid #dcdcdc;
+      display:inline-block;
+      color:#666666;
+      font-family:arial;
+      font-size:15px;
+      font-weight:bold;
+      padding:6px 24px;
+      text-decoration:none;
+      text-shadow:1px 1px 0px #ffffff;
+    }
+
+    .btn-debug:hover {
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff) );
+      background:-moz-linear-gradient( center top, #f6f6f6 5%, #ffffff 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff');
+      background-color:#f6f6f6;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner" class="offline">
+    <a href="#" onclick="window.open('debug.html%X_UA_COMPATIBLE_URL%')" class="btn-debug">DEBUG</a>
+    <h1 id="title">Karma - starting</h1>
+  </div>
+
+  <ul id="browsers"></ul>
+
+  <iframe id="context" src="about:blank" width="100%" height="100%"></iframe>
+
+  <script src="socket.io/socket.io.min.js"></script>
+  <script src="karma.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<!--
+This is the execution context.
+Loaded within the iframe.
+Reloaded before every execution run.
+-->
+<html>
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+<body>
+  <!-- The scripts need to be in the body DOM element, as some test running frameworks need the body
+       to have already been created so they can insert their magic into it. For example, if loaded
+       before body, Angular Scenario test framework fails to find the body and crashes and burns in
+       an epic manner. -->
+  <script src="context.js"></script>
+  <script type="text/javascript">
+    // Configure our Karma and set up bindings
+    %CLIENT_CONFIG%
+    window.__karma__.setupContext(window);
+
+    // All served files with the latest timestamps
+    %MAPPINGS%
+  </script>
+  <!-- Dynamically replaced with <script> tags -->
+  %SCRIPTS%
+  <!-- Since %SCRIPTS% might include modules, the `loaded()` call needs to be in a module too.
+   This ensures all the tests will have been declared before karma tries to run them. -->
+  <script type="module">
+    window.__karma__.loaded();
+  </script>
+  <script nomodule>
+    window.__karma__.loaded();
+  </script>
+</body>
+</html>
+<!doctype html>
+<!--
+This file is almost the same as context.html - loads all source files,
+but its purpose is to be loaded in the main frame (not within an iframe),
+just for immediate execution, without reporting to Karma server.
+-->
+<html>
+<head>
+  %X_UA_COMPATIBLE%
+  <title>Karma DEBUG RUNNER</title>
+  <link href="favicon.ico" rel="icon" type="image/x-icon" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+</head>
+<body>
+  <!-- The scripts need to be at the end of body, so that some test running frameworks
+   (Angular Scenario, for example) need the body to be loaded so that it can insert its magic
+   into it. If it is before body, then it fails to find the body and crashes and burns in an epic
+   manner. -->
+  <script src="context.js"></script>
+  <script src="debug.js"></script>
+  <script type="text/javascript">
+    // Configure our Karma
+    %CLIENT_CONFIG%
+
+    // All served files with the latest timestamps
+    %MAPPINGS%
+  </script>
+  <!-- Dynamically replaced with <script> tags -->
+  %SCRIPTS%
+  <!-- Since %SCRIPTS% might include modules, the `loaded()` call needs to be in a module too.
+   This ensures all the tests will have been declared before karma tries to run them. -->
+  <script type="module">
+    window.__karma__.loaded();
+  </script>
+  <script nomodule>
+    window.__karma__.loaded();
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<!--
+This is the combined client and execution context.
+Is used for single-shot tests.
+-->
+<html>
+<head>
+
+  <title>Karma</title>
+  <link href="favicon.ico" rel="icon" type="image/x-icon">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <style type="text/css">
+    iframe {
+      height: 100%;
+      width: 100%;
+      border: 0;
+    }
+
+    html, body {
+      height: 100%;
+      padding: 0;
+      margin: 0;
+
+      font-family: sans-serif;
+    }
+
+    .offline {
+      background: #DDD;
+    }
+
+    .online {
+      background: #6C4;
+    }
+
+    .idle {
+    }
+
+    .executing {
+      background: #F99;
+    }
+
+    #banner {
+      padding: 5px 10px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+      margin: 0;
+      padding: 0;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+
+      list-style: none;
+    }
+
+    li {
+      padding: 5px 12px;
+    }
+
+    .btn-debug {
+      float: right;
+    }
+
+    .offline .btn-debug {
+      display: none;
+    }
+
+    .btn-debug {
+      -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+      box-shadow:inset 0px 1px 0px 0px #ffffff;
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffffff), color-stop(1, #f6f6f6) );
+      background:-moz-linear-gradient( center top, #ffffff 5%, #f6f6f6 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#f6f6f6');
+      background-color:#ffffff;
+      -moz-border-radius:6px;
+      -webkit-border-radius:6px;
+      border-radius:6px;
+      border:1px solid #dcdcdc;
+      display:inline-block;
+      color:#666666;
+      font-family:arial;
+      font-size:15px;
+      font-weight:bold;
+      padding:6px 24px;
+      text-decoration:none;
+      text-shadow:1px 1px 0px #ffffff;
+    }
+
+    .btn-debug:hover {
+      background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #f6f6f6), color-stop(1, #ffffff) );
+      background:-moz-linear-gradient( center top, #f6f6f6 5%, #ffffff 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6f6f6', endColorstr='#ffffff');
+      background-color:#f6f6f6;
+    }
+  </style>
+</head>
+<body>
+  <div id="banner" class="offline">
+    <h1 id="title">Karma - starting</h1>
+  </div>
+  <script src="socket.io/socket.io.min.js"></script>
+  <script src="karma.js"></script>
+  <script src="context.js"></script>
+  <!-- The scripts need to be at the end of body, so that some test running frameworks
+       (Angular Scenario, for example) need the body to be loaded so that it can insert its magic
+       into it. If it is before body, then it fails to find the body and crashes and burns in an epic
+       manner. -->
+  <script type="text/javascript">
+    // sets window.__karma__ and overrides console and error handling
+    %CLIENT_CONFIG%
+    window.__karma__.setupContext(window);
+
+    // All served files with the latest timestamps
+    %MAPPINGS%
+    %SCRIPT_URL_ARRAY%
+  </script>
+  <!-- Dynamically replaced with <script> tags -->
+</body>
+</html>
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node-version: [8.x, 10.x, 12.x, 14.x, 16.x, 18.x, 20.x, 22.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm install
+    - run: npm run ci
+name: Lock Threads
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+concurrency:
+  group: lock
+
+permissions:
+  contents: read
+
+jobs:
+  lock-threads:
+    permissions:
+      issues: write
+      pull-requests: write
+    uses: fastify/workflows/.github/workflows/lock-threads.yml@v6
+name: package-manager-ci
+
+on:
+  push:
+    branches:
+     - main
+     - next
+     - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    permissions:
+      contents: read
+    uses: fastify/workflows/.github/workflows/plugins-ci-package-manager.yml@v6
+name: CI
+
+on:
+  push:
+    branches:
+     - main
+     - next
+     - 'v*'
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+    group: "${{ github.workflow }}-${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
+    cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-regression-check-node10:
+    name: Test compatibility with Node.js 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '10'
+          cache: 'npm'
+          cache-dependency-path: package.json
+          check-latest: true
+
+      - name: Install
+        run: |
+          npm install --ignore-scripts
+
+      - name: Copy project as fast-uri to node_node_modules
+        run: |
+          rm -rf ./node_modules/fast-uri/lib &&
+          rm -rf ./node_modules/fast-uri/index.js &&
+          cp -r ./lib ./node_modules/fast-uri/lib &&
+          cp ./index.js ./node_modules/fast-uri/index.js
+
+      - name: Run tests
+        run: |
+          npm run test:unit
+        env:
+          NODE_OPTIONS: no-network-family-autoselection
+
+  test-browser:
+    name: Test browser compatibility
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        browser: ['chromium', 'firefox', 'webkit']
+        exclude:
+          - os: ubuntu-latest
+            browser: webkit
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: package.json
+          check-latest: true
+
+      - name: Install dependencies
+        run: |
+          npm install --ignore-scripts
+
+      - if: ${{ matrix.os == 'windows-latest' }}
+        run: npx playwright install winldd
+
+      - name: Run browser tests
+        run: |
+          npm run test:browser:${{ matrix.browser }}
+
+  test:
+    needs:
+      - test-regression-check-node10
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: fastify/workflows/.github/workflows/plugins-ci.yml@v6
+    with:
+      license-check: true
+      lint: true
+      node-versions: '["16", "18", "20", "22", "24"]'
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+  - 0.4
+  - 0.6
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/safe-regex-test
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/get-proto
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+<script src="./ua-parser.min.js"></script>
+parser: typescript
+printWidth: 80
+tabWidth: 2
+singleQuote: true
+trailingComma: all
+arrowParens: always
+bracketSpacing: false# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/gopd
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+- '0.10'
+env:
+  global:
+  - secure: qdX24UIsib/+okMgShObAO20BrYRnh8dcEsMq522uVIRYLwwjx/raTFBEUQImC3tM5Xt1jvth1bWetmTT0zrzN1YgGUDI0yurQbPAdhHEjc63lK2d1QNeTJnpzFyyQ2D/ZtOlNL9xzk0shzFh0cAKm2IS0gxHRrDRkVzR/JtvL0=
+  - secure: gyV82GANCt70Llx5v6GkGPVv1X3zOxlf/eMpDXpAt6nMP24dDRx5fi9Z9B546cHl7f4Pq27++8M5FUAexF+zq3nTRX1KvTFLUnpXBVg2RacBWTWOQP09FbdcbUHHSvwsXQuEOT8U6yfiZq6wcBEwKoXIqUUN4QZ+zdcCqOvZ+gw=
+  matrix:
+  - BROWSER_NAME=chrome BROWSER_VERSION=latest
+  - BROWSER_NAME=chrome BROWSER_VERSION=35
+  - BROWSER_NAME=chrome BROWSER_VERSION=34
+  - BROWSER_NAME=firefox BROWSER_VERSION=latest
+  - BROWSER_NAME=firefox BROWSER_VERSION=30
+  - BROWSER_NAME=firefox BROWSER_VERSION=29
+  - BROWSER_NAME=opera BROWSER_VERSION=latest
+  - BROWSER_NAME=opera BROWSER_VERSION=11
+  - BROWSER_NAME=safari BROWSER_VERSION=latest
+  - BROWSER_NAME=safari BROWSER_VERSION=7
+  - BROWSER_NAME=safari BROWSER_VERSION=6
+  - BROWSER_NAME=safari BROWSER_VERSION=5
+  - BROWSER_NAME=ie BROWSER_VERSION=11
+  - BROWSER_NAME=ie BROWSER_VERSION=10
+  - BROWSER_NAME=ie BROWSER_VERSION=9
+  - BROWSER_NAME=ie BROWSER_VERSION=8
+  - BROWSER_NAME=ie BROWSER_VERSION=7
+  - BROWSER_NAME=ie BROWSER_VERSION=6
+  - BROWSER_NAME=iphone BROWSER_VERSION=7.1
+  - BROWSER_NAME=iphone BROWSER_VERSION=7.0
+  - BROWSER_NAME=iphone BROWSER_VERSION=6.1
+repo_token: SIAeZjKYlHK74rbcFvNHMUzjRiMpflxve
+
+language: node_js
+node_js:
+  - "6"
+  - "5"
+  - "4"
+
+install:
+  - make node_modules
+
+script:
+  - make lint
+  - make test
+  - make coveralls
+coverage:
+  parsers:
+    javascript:
+      enable_partials: yes
+  status:
+    project:
+      default:
+        target: "70%"
+    patch:
+      enabled: false
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/side-channel-map
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/object-inspect
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with up to 4 custom sponsorship URLs e.g., ['link1', 'link2']
+language: node_js
+node_js:
+- '0.10'
+env:
+  global:
+  - secure: VEtxOvO70QprLOKcRNFaEGoWMFXzUJ6D6/lmS8Iw+wlSuXMZVYb/vxqM3Fgp6WR5NaFoJ9drgTmIIR1jqlzN6vDpVh1NKAxYm6YAajJn8hFxQlbbagoM7E3Zx1A+YKldk8UygD3Tldj231ZLc8We+ZBWdoVWM3Si/bLO8O6rBVU=
+  - secure: ZBLLYhAqGdP6R5z4ZJb/9OOmqlRasMn2lynzYKn/VO6RNgG0gqDtWOh9M+9LaGNkRGrUOyjkhnh+6FI1vmBpGwmapCq5voagzc34+4vz/CWhHM3P0/axr9kSNtWZ5Oj57PiOuvbBoMUWZcDsv8vomhm/K/c6LIxlC3Z6sJ55l78=
+  matrix:
+  - BROWSER_NAME=chrome BROWSER_VERSION=latest
+  - BROWSER_NAME=chrome BROWSER_VERSION=35
+  - BROWSER_NAME=chrome BROWSER_VERSION=34
+  - BROWSER_NAME=firefox BROWSER_VERSION=latest
+  - BROWSER_NAME=firefox BROWSER_VERSION=30
+  - BROWSER_NAME=firefox BROWSER_VERSION=29
+  - BROWSER_NAME=opera BROWSER_VERSION=latest
+  - BROWSER_NAME=opera BROWSER_VERSION=11
+  - BROWSER_NAME=safari BROWSER_VERSION=latest
+  - BROWSER_NAME=safari BROWSER_VERSION=7
+  - BROWSER_NAME=safari BROWSER_VERSION=6
+  - BROWSER_NAME=safari BROWSER_VERSION=5
+  - BROWSER_NAME=ie BROWSER_VERSION=11
+  - BROWSER_NAME=ie BROWSER_VERSION=10
+  - BROWSER_NAME=ie BROWSER_VERSION=9
+  - BROWSER_NAME=iphone BROWSER_VERSION=7.1
+  - BROWSER_NAME=iphone BROWSER_VERSION=7.0
+  - BROWSER_NAME=iphone BROWSER_VERSION=6.1
+# These are supported funding model platforms
+
+github: [ljharb]
+patreon: # Replace with a single Patreon username
+open_collective: # Replace with a single Open Collective username
+ko_fi: # Replace with a single Ko-fi username
+tidelift: npm/es-object
+community_bridge: # Replace with a single Community Bridge project-name e.g., cloud-foundry
+liberapay: # Replace with a single Liberapay username
+issuehunt: # Replace with a single IssueHunt username
+otechie: # Replace with a single Otechie username
+custom: # Replace with a single custom sponsorship URL
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>StoreFront</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <app-root></app-root>
+
+    <!-- Razorpay Checkout JS -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </body>
+</html>
+<div class="main-content" style="padding: 20px 0">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid" style="max-width: 1100px; margin: 0 auto">
+      <!-- Cart Items Table -->
+      <table
+        *ngIf="cartItems.length > 0"
+        class="table table-bordered"
+        style="
+          width: 100%;
+          border-collapse: collapse;
+          background-color: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+        "
+      >
+        <thead>
+          <tr style="background-color: #0284c7; color: #ffffff">
+            <th
+              width="20%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Product Image
+            </th>
+            <th
+              width="50%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Product Detail
+            </th>
+            <th
+              width="30%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Quantity & Subtotal
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let tempCartItem of cartItems"
+            style="border-bottom: 1px solid #f1f5f9"
+          >
+            <!-- Product Image Column -->
+            <td
+              style="padding: 16px; text-align: center; vertical-align: middle"
+            >
+              <img
+                [src]="tempCartItem.imageUrl"
+                class="img-responsive"
+                width="150px"
+                style="
+                  max-height: 120px;
+                  object-fit: contain;
+                  border-radius: 8px;
+                  padding: 6px;
+                  background-color: #f8fafc;
+                "
+              />
+            </td>
+
+            <!-- Product Details Column -->
+            <td style="padding: 16px; vertical-align: middle">
+              <p
+                style="
+                  font-size: 17px;
+                  font-weight: 600;
+                  color: #0f172a;
+                  margin: 0 0 8px 0;
+                "
+              >
+                {{ tempCartItem.name }}
+              </p>
+              <p
+                style="
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: #0284c7;
+                  margin: 0;
+                "
+              >
+                {{ tempCartItem.unitPrice | currency: "USD" }}
+              </p>
+            </td>
+
+            <!-- Quantity Controls & Subtotal Column -->
+            <td style="padding: 16px; vertical-align: middle">
+              <div class="items" style="margin-bottom: 10px">
+                <label
+                  style="
+                    font-weight: 600;
+                    color: #475569;
+                    margin-bottom: 6px;
+                    display: block;
+                  "
+                  >Quantity:</label
+                >
+
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <button
+                    (click)="incrementQuantity(tempCartItem)"
+                    class="btn btn-primary btn-sm"
+                    style="
+                      background-color: #0284c7;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 14px;
+                    "
+                  >
+                    +
+                  </button>
+
+                  <span
+                    style="
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: #0f172a;
+                      min-width: 20px;
+                      text-align: center;
+                    "
+                    >{{ tempCartItem.quantity }}</span
+                  >
+
+                  <button
+                    (click)="decrementQuantity(tempCartItem)"
+                    class="btn btn-primary btn-sm"
+                    style="
+                      background-color: #0284c7;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 14px;
+                    "
+                  >
+                    -
+                  </button>
+
+                  <button
+                    (click)="removeItem(tempCartItem)"
+                    class="btn btn-danger"
+                    style="
+                      background-color: #ef4444;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: 600;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 13px;
+                      margin-left: 8px;
+                    "
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+
+              <p
+                class="mt-2"
+                style="
+                  font-size: 15px;
+                  font-weight: 600;
+                  color: #334155;
+                  margin: 8px 0 0 0;
+                "
+              >
+                Subtotal:
+                {{
+                  tempCartItem.quantity * tempCartItem.unitPrice
+                    | currency: "USD"
+                }}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Summary Row -->
+          <tr style="background-color: #f8fafc">
+            <td
+              colspan="2"
+              style="
+                padding: 16px;
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+                text-align: right;
+              "
+            >
+              Cart Summary
+            </td>
+            <td
+              style="
+                padding: 16px;
+                font-weight: 600;
+                color: #1e293b;
+                font-size: 15px;
+              "
+            >
+              <p style="margin: 4px 0">
+                Total Quantity: <strong>{{ totalQuantity }}</strong>
+              </p>
+              <p style="margin: 4px 0; color: #16a34a">
+                Shipping: <strong>FREE</strong>
+              </p>
+              <p style="margin: 4px 0; font-size: 18px; color: #0284c7">
+                Total Price: <strong>{{ totalPrice | currency: "USD" }}</strong>
+              </p>
+
+              <div *ngIf="cartItems.length !== 0" style="margin-top: 12px">
+                <a
+                  routerLink="/checkout"
+                  class="btn btn-primary"
+                  style="
+                    background-color: #0f172a;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 14px;
+                    transition: background 0.2s ease;
+                  "
+                >
+                  Proceed To Checkout
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty Cart Alert -->
+      <div
+        *ngIf="cartItems.length === 0"
+        class="alert alert-warning col-md-12"
+        role="alert"
+        style="
+          background-color: #fef3c7;
+          color: #92400e;
+          padding: 20px 24px;
+          border-radius: 10px;
+          border: 1px solid #fde68a;
+          font-size: 16px;
+          font-weight: 500;
+        "
+      >
+        Your shopping cart is empty.
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main-content page-m" style="padding: 20px 0">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid" style="max-width: 900px; margin: 0 auto">
+      <form
+        [formGroup]="checkoutFormGroup"
+        (ngSubmit)="onSubmit()"
+        style="
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+        "
+      >
+        <!-- Customer Form Group -->
+        <div
+          formGroupName="customer"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Customer Details
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Name</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="name"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Email</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="email"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Phone No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="phno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address Form Group -->
+        <div
+          formGroupName="shippingAddress"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Shipping Address
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>House No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="hno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Street</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="street"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>City</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="city"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>State</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="state"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Zip Code</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="zipCode"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Details Review -->
+        <div
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 18px;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+          >
+            Review Your Order
+          </h3>
+          <p style="margin: 6px 0; font-size: 15px; color: #334155">
+            Total Quantity: <strong>{{ totalQuantity }}</strong>
+          </p>
+          <p style="margin: 6px 0; font-size: 15px; color: #16a34a">
+            Shipping: <strong>FREE</strong>
+          </p>
+          <p
+            style="
+              margin: 6px 0;
+              font-size: 18px;
+              font-weight: 700;
+              color: #0284c7;
+            "
+          >
+            Total Price: {{ totalPrice | currency: "USD" }}
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center" style="text-align: center">
+          <button
+            type="submit"
+            class="btn btn-info"
+            style="
+              background-color: #0f172a;
+              color: #ffffff;
+              border: none;
+              padding: 12px 35px;
+              border-radius: 8px;
+              font-weight: 600;
+              font-size: 16px;
+              cursor: pointer;
+              transition: background 0.2s ease;
+            "
+          >
+            Purchase
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<aside
+  style="
+    width: 240px;
+    background-color: #0f172a;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 25px 20px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <!-- Modern Logo Branding -->
+  <div
+    style="
+      margin-bottom: 35px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 20px;
+    "
+  >
+    <a routerLink="/" style="text-decoration: none">
+      <h2
+        style="
+          color: #38bdf8;
+          font-weight: 800;
+          font-size: 22px;
+          margin: 0;
+          letter-spacing: 1px;
+        "
+      >
+        STORE<span style="color: #ffffff">FRONT</span>
+      </h2>
+    </a>
+  </div>
+
+  <!-- Category Navigation Menu -->
+  <div class="menu-sidebar-content">
+    <nav class="navbar-sidebar">
+      <h4
+        style="
+          font-size: 11px;
+          text-transform: uppercase;
+          color: #94a3b8;
+          letter-spacing: 1.5px;
+          margin-bottom: 15px;
+          font-weight: 700;
+        "
+      >
+        Categories
+      </h4>
+      <ul style="padding-left: 0; list-style: none; margin: 0">
+        <li
+          *ngFor="let tempCategory of productCategories"
+          style="margin-bottom: 8px"
+        >
+          <a
+            [routerLink]="['/category', tempCategory.categoryId]"
+            routerLinkActive="active-category"
+            style="
+              text-decoration: none;
+              color: #cbd5e1;
+              font-size: 15px;
+              font-weight: 500;
+              display: block;
+              padding: 10px 14px;
+              border-radius: 8px;
+              transition: all 0.2s ease;
+            "
+          >
+            {{ tempCategory.categoryName }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+<div
+  style="
+    display: flex;
+    align-items: center;
+    width: 480px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 25px;
+    overflow: hidden;
+  "
+>
+  <input
+    #myInput
+    type="text"
+    placeholder="Search products, brands, categories..."
+    (keyup.enter)="doSearch(myInput.value)"
+    style="
+      border: none;
+      padding: 12px 22px;
+      width: 100%;
+      outline: none;
+      font-size: 15px;
+      color: #1e293b;
+      background-color: #ffffff;
+    "
+  />
+
+  <button
+    type="button"
+    (click)="doSearch(myInput.value)"
+    style="
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    "
+  >
+    Search
+  </button>
+</div>
+<form (ngSubmit)="onRegister()" #registerForm="ngForm">
+  <!-- Name Input -->
+  <div class="form-group mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input
+      type="text"
+      id="name"
+      class="form-control"
+      placeholder="Enter full name"
+      [(ngModel)]="customer.name"
+      name="name"
+      required
+    />
+  </div>
+
+  <!-- Email Input -->
+  <div class="form-group mb-3">
+    <label for="email" class="form-label">Email Address</label>
+    <input
+      type="email"
+      id="email"
+      class="form-control"
+      placeholder="e.g. john@example.com"
+      [(ngModel)]="customer.email"
+      name="email"
+      required
+    />
+  </div>
+
+  <!-- Phone Number Input -->
+  <div class="form-group mb-3">
+    <label for="phoneNo" class="form-label">Phone Number</label>
+    <input
+      type="text"
+      id="phoneNo"
+      class="form-control"
+      placeholder="e.g. 9876543210"
+      [(ngModel)]="customer.phoneNo"
+      name="phoneNo"
+      required
+    />
+  </div>
+
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    class="btn btn-primary btn-submit w-100"
+    [disabled]="!registerForm.form.valid"
+  >
+    Register Account
+  </button>
+</form>
+<div
+  class="container text-center"
+  style="padding: 60px 20px; max-width: 600px; margin: 0 auto"
+>
+  <div
+    style="
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    "
+  >
+    <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px">✓</div>
+    <h2 style="color: #0f172a; font-weight: 700; margin-bottom: 10px">
+      Order Placed Successfully!
+    </h2>
+    <p style="color: #64748b; font-size: 16px; margin-bottom: 30px">
+      Thank you for your purchase. Your payment has been confirmed and your
+      order is being processed.
+    </p>
+    <a
+      routerLink="/products"
+      class="btn"
+      style="
+        background-color: #0f172a;
+        color: #ffffff;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+      "
+    >
+      Continue Shopping
+    </a>
+  </div>
+</div>
+<
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Unlock Your Account</h2>
+      <p class="auth-subtitle">
+        Please enter your temporary password and set a new permanent password
+      </p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onResetPassword()" #resetForm="ngForm">
+      <!-- Email (Read-Only) -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control readonly-input"
+          [(ngModel)]="resetPwdDto.email"
+          name="email"
+          readonly
+        />
+      </div>
+
+      <!-- Temporary / Old Password -->
+      <div class="form-group mb-3">
+        <label for="oldPwd" class="form-label">Temporary Password</label>
+        <input
+          type="password"
+          id="oldPwd"
+          class="form-control"
+          placeholder="Enter temporary password from email"
+          [(ngModel)]="resetPwdDto.oldPwd"
+          name="oldPwd"
+          required
+        />
+      </div>
+
+      <!-- New Password -->
+      <div class="form-group mb-3">
+        <label for="newPwd" class="form-label">New Password</label>
+        <input
+          type="password"
+          id="newPwd"
+          class="form-control"
+          placeholder="Enter new permanent password"
+          [(ngModel)]="resetPwdDto.newPwd"
+          name="newPwd"
+          required
+        />
+      </div>
+
+      <!-- Confirm New Password -->
+      <div class="form-group mb-4">
+        <label for="confirmPwd" class="form-label">Confirm New Password</label>
+        <input
+          type="password"
+          id="confirmPwd"
+          class="form-control"
+          placeholder="Re-enter new password"
+          [(ngModel)]="resetPwdDto.confirmPwd"
+          name="confirmPwd"
+          required
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-submit w-100"
+        [disabled]="!resetForm.form.valid"
+      >
+        Update Password & Unlock
+      </button>
+    </form>
+
+    <!-- Navigation Link -->
+    <div class="auth-footer text-center mt-4">
+      <p>
+        Remembered your password?
+        <a routerLink="/login" class="auth-link">Back to Sign In</a>
+      </p>
+    </div>
+  </div>
+</div>
+<div
+  class="cart-area"
+  style="
+    background-color: #006699;
+    color: white;
+    border-radius: 25px;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+  "
+>
+  <a
+    routerLink="/cart-details"
+    style="
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <span style="font-weight: bold; margin-right: 15px; font-size: 18px">{{
+      totalPrice | currency: "USD"
+    }}</span>
+    <span
+      style="
+        background-color: white;
+        color: black;
+        border-radius: 50%;
+        padding: 4px 12px;
+        font-weight: bold;
+        font-size: 16px;
+      "
+      >{{ totalQuantity }}</span
+    >
+  </a>
+</div>
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Welcome Back</h2>
+      <p class="auth-subtitle">Please sign in to your customer account</p>
+    </div>
+
+    <!-- Alert Banners -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-circle-fill me-2"></i> {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <!-- Email Field -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-icon-wrapper">
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            placeholder="e.g. john@example.com"
+            [(ngModel)]="credentials.email"
+            name="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group mb-4">
+        <label for="password" class="form-label"
+          >Password / Temporary Password</label
+        >
+        <div class="input-icon-wrapper">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter your password"
+            [(ngModel)]="credentials.password"
+            name="password"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-submit w-100"
+        [disabled]="!loginForm.form.valid"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <!-- Navigation Link -->
+    <div class="auth-footer text-center mt-4">
+      <p>
+        Don't have an account?
+        <a routerLink="/register" class="auth-link">Register Here</a>
+      </p>
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary px-4">
+  <a class="navbar-brand fw-bold" routerLink="/">STOREFRONT</a>
+
+  <div class="collapse navbar-collapse justify-content-end">
+    <ul class="navbar-nav align-items-center gap-3">
+      <!-- Search & Cart Links -->
+      <li class="nav-item">
+        <a class="nav-link text-white" routerLink="/cart">
+          Cart
+          <span class="badge bg-warning text-dark">{{ cartItemCount }}</span>
+        </a>
+      </li>
+
+      <!-- IF LOGGED IN: Show Logout Button and User Email -->
+      <ng-container *ifLoggedIn="true; else loggedOutBlock">
+        <li class="nav-item text-white me-2">
+          <i class="bi bi-person-circle me-1"></i> {{ loggedUser?.email }}
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light btn-sm" (click)="onLogout()">
+            Logout
+          </button>
+        </li>
+      </ng-container>
+
+      <!-- IF LOGGED OUT: Show Login Button -->
+      <ng-template #loggedOutBlock>
+        <li class="nav-item">
+          <a
+            class="btn btn-light btn-sm text-primary fw-bold"
+            routerLink="/login"
+          >
+            Login
+          </a>
+        </li>
+      </ng-template>
+    </ul>
+  </div>
+</nav>
+<div class="container-fluid" style="padding: 0">
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    "
+  >
+    <!-- Product Card Loop -->
+    <div
+      *ngFor="let tempProduct of products"
+      style="
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      "
+    >
+      <div>
+        <div
+          style="
+            height: 180px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+          "
+        >
+          <img
+            [src]="tempProduct.imageUrl"
+            style="max-height: 100%; max-width: 100%; object-fit: contain"
+          />
+        </div>
+
+        <h4
+          style="
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 10px 0 6px 0;
+            line-height: 1.3;
+          "
+        >
+          {{ tempProduct.name }}
+        </h4>
+
+        <div
+          style="
+            color: #0284c7;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+          "
+        >
+          {{ tempProduct.unitPrice | currency: "USD" }}
+        </div>
+      </div>
+
+      <button
+        (click)="addToCart(tempProduct)"
+        style="
+          background-color: #0f172a;
+          color: #ffffff;
+          width: 100%;
+          padding: 10px 0;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        "
+      >
+        Add to cart
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty Product Alert -->
+  <div
+    *ngIf="products && products.length === 0"
+    style="
+      width: 100%;
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    "
+  >
+    <p style="font-size: 18px; color: #64748b; font-weight: 500; margin: 0">
+      No products available for this selection.
+    </p>
+  </div>
+</div>
+<div
+  class="page-wrapper"
+  style="
+    display: flex;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <!-- Sidebar Component -->
+  <app-product-category-menu></app-product-category-menu>
+
+  <div
+    class="page-container"
+    style="flex-grow: 1; display: flex; flex-direction: column"
+  >
+    <!-- Header -->
+    <header
+      style="
+        background-color: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 16px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      "
+    >
+      <!-- Integrated Search Component -->
+      <app-search></app-search>
+
+      <!-- Cart Status Component -->
+      <app-cart-status></app-cart-status>
+    </header>
+
+    <!-- Main Dynamic Content -->
+    <main style="flex-grow: 1; padding: 30px 35px">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

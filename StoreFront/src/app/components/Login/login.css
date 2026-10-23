@@ -1,0 +1,114 @@
+/* Center wrapper inside storefront layout */
+/* Flexible wrapper that respects the sidebar */
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - 120px);
+  padding: 2rem 1.5rem;
+  background-color: #f8fafc;
+  box-sizing: border-box;
+}
+
+/* Auth Card Container */
+.auth-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 2.25rem 2rem;
+  border-radius: 16px;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+}
+
+/* Header Text */
+.auth-header h2 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+  text-align: center;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+/* Labels & Form Controls */
+.form-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #334155;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: #1e293b;
+  background-color: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  background-color: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.15);
+}
+
+/* Submit Button */
+.btn-submit {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Links & Footer */
+.auth-footer p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.auth-link {
+  color: #0284c7;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}

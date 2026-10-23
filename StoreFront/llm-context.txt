@@ -1,0 +1,2377 @@
+=== src/index.html ===
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>StoreFront</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <app-root></app-root>
+
+    <!-- Razorpay Checkout JS -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </body>
+</html>
+=== src/app/dto/purchaseorder.ts ===
+import { Customer } from './customer';
+import { Address } from './address';
+import { Order } from './order';
+import { Orderitems } from './orderitems';
+
+export class Purchaseorder {
+  customerDto!: Customer;
+  addressDto!: Address;
+  orderDto!: Order;
+  orderItemDtoList!: Orderitems[];
+}
+=== src/app/dto/reset-pwd_dto.ts ===
+export interface ResetPwdDto {
+  email: string;
+  oldPwd?: string;
+  newPwd?: string;
+  confirmPwd?: string;
+}
+=== src/app/dto/payment-callback.ts ===
+export class PaymentCallback {
+  constructor(
+    public razorpayOrderId: string,
+    public razorpayPaymentId: string,
+    public orderTrackingNum?: string,
+    public orderStatus?: string,
+    public paymentStatus?: string,
+    public razorpaySignature?: string,
+  ) {}
+}
+=== src/app/dto/customer.ts ===
+export class Customer {
+  customerId?: number;
+  name: string;
+  email: string;
+  phoneNo: string;
+
+  constructor(name: string, email: string, phoneNo: string) {
+    this.name = name;
+    this.email = email;
+    this.phoneNo = phoneNo;
+  }
+}
+=== src/app/dto/api-response.ts ===
+export interface ApiResponse<T> {
+  status: number;
+  msg: string;
+  data: T;
+}
+=== src/app/dto/order.ts ===
+export class Order {
+  totalQuantity: number;
+  totalPrice: number;
+
+  constructor(totalQuantity: number, totalPrice: number) {
+    this.totalQuantity = totalQuantity;
+    this.totalPrice = totalPrice;
+  }
+}
+=== src/app/dto/orderitems.ts ===
+import { CartItem } from '../models/cart-items';
+
+export class Orderitems {
+  itemId?: number;
+  imageUrl: string;
+  quantity: number;
+  unitPrice: number;
+  productName: string;
+
+  constructor(cartItem: CartItem) {
+    this.imageUrl = cartItem.imageUrl;
+    this.quantity = cartItem.quantity;
+    this.unitPrice = cartItem.unitPrice;
+    this.productName = cartItem.name;
+  }
+}
+=== src/app/dto/customer-dto.ts ===
+export interface CustomerDto {
+  customerId?: number;
+  name?: string;
+  email: string;
+  password?: string;
+  pwdUpdated?: string;
+  phoneNo?: string;
+}
+=== src/app/dto/address.ts ===
+export class Address {
+  addrId?: number;
+  hno: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  addrType: string;
+
+  constructor(
+    street: string,
+    city: string,
+    state: string,
+    zipCode: string,
+    hno: string = '',
+  ) {
+    this.street = street;
+    this.city = city;
+    this.state = state;
+    this.zipCode = zipCode;
+    this.hno = hno;
+    this.addrType = 'HOME';
+  }
+}
+=== src/app/app.spec.ts ===
+import { TestBed } from '@angular/core/testing';
+import { App } from './app';
+
+describe('App', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, StoreFront');
+  });
+});
+=== src/app/app.routes.ts ===
+import { Routes } from '@angular/router';
+import { ProductListComponent } from './components/product-list/product-list';
+import { CartDetailsComponent } from './components/cart-details/cart-details';
+import { RegisterComponent } from './components/register/register';
+import { CheckoutComponent } from './components/checkout/checkout';
+import { OrderConfirmationComponent } from './components/order-confirmation/order-confirmation';
+import { LoginComponent } from './components/Login/login';
+import { ResetPasswordComponent } from './components/reset-password/reset-password';
+
+export const routes: Routes = [
+  { path: 'login', component: LoginComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  { path: 'category/:id', component: ProductListComponent },
+  { path: 'category', component: ProductListComponent },
+  { path: 'products', component: ProductListComponent },
+  { path: 'cart-details', component: CartDetailsComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'checkout', component: CheckoutComponent },
+  { path: 'order-confirmation', component: OrderConfirmationComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login', pathMatch: 'full' },
+];
+=== src/app/app.ts ===
+import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { ProductCategoryMenuComponent } from './components/product-category-menu/product-category-menu';
+import { SearchComponent } from './components/search/search';
+import { CartStatusComponent } from './components/cart-status/cart-status';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [
+    RouterModule,
+    ProductCategoryMenuComponent,
+    SearchComponent,
+    CartStatusComponent,
+  ],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class AppComponent {}
+=== src/app/constants/app-constants.ts ===
+export class AppConstants {
+  static PRODUCT_API = 'http://localhost:8080';
+  static CATEGORY_ENDPOINT = `${AppConstants.PRODUCT_API}/categories`;
+  static PRODUCTS_SEARCH_ENDPOINT = `${AppConstants.PRODUCT_API}/products/search`;
+
+  public static ORDER_ENDPOINT = 'http://localhost:8081/order'; // Adjust port/URL if needed
+}
+=== src/app/models/product-category.ts ===
+export interface ProductCategory {
+  categoryId: number;
+  categoryName: string;
+  active?: string;
+}
+=== src/app/models/product.ts ===
+export interface Product {
+  productId: number;
+  name: string;
+  description: string;
+  title: string;
+  unitPrice: number;
+  imageUrl: string;
+  active: boolean;
+  unitsInStock: number;
+}
+=== src/app/models/cart-items.ts ===
+import { Product } from './product';
+
+export class CartItem {
+  id: number;
+  name: string;
+  imageUrl: string;
+  unitPrice: number;
+  quantity: number;
+
+  constructor(product: Product) {
+    this.id = product.productId;
+    this.name = product.name;
+    this.imageUrl = product.imageUrl;
+    this.unitPrice = product.unitPrice;
+    this.quantity = 1;
+  }
+}
+=== src/app/models/api-response.ts ===
+export interface ApiResponse<T> {
+  status: number;
+  message?: string;
+  msg?: string;
+  data: T;
+}
+=== src/app/razorpay.d.ts ===
+declare var Razorpay: any;
+=== src/app/components/cart-details/cart-details.html ===
+<div class="main-content" style="padding: 20px 0">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid" style="max-width: 1100px; margin: 0 auto">
+      <!-- Cart Items Table -->
+      <table
+        *ngIf="cartItems.length > 0"
+        class="table table-bordered"
+        style="
+          width: 100%;
+          border-collapse: collapse;
+          background-color: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+        "
+      >
+        <thead>
+          <tr style="background-color: #0284c7; color: #ffffff">
+            <th
+              width="20%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Product Image
+            </th>
+            <th
+              width="50%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Product Detail
+            </th>
+            <th
+              width="30%"
+              style="
+                padding: 14px 16px;
+                text-align: left;
+                font-size: 15px;
+                font-weight: 600;
+              "
+            >
+              Quantity & Subtotal
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let tempCartItem of cartItems"
+            style="border-bottom: 1px solid #f1f5f9"
+          >
+            <!-- Product Image Column -->
+            <td
+              style="padding: 16px; text-align: center; vertical-align: middle"
+            >
+              <img
+                [src]="tempCartItem.imageUrl"
+                class="img-responsive"
+                width="150px"
+                style="
+                  max-height: 120px;
+                  object-fit: contain;
+                  border-radius: 8px;
+                  padding: 6px;
+                  background-color: #f8fafc;
+                "
+              />
+            </td>
+
+            <!-- Product Details Column -->
+            <td style="padding: 16px; vertical-align: middle">
+              <p
+                style="
+                  font-size: 17px;
+                  font-weight: 600;
+                  color: #0f172a;
+                  margin: 0 0 8px 0;
+                "
+              >
+                {{ tempCartItem.name }}
+              </p>
+              <p
+                style="
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: #0284c7;
+                  margin: 0;
+                "
+              >
+                {{ tempCartItem.unitPrice | currency: "USD" }}
+              </p>
+            </td>
+
+            <!-- Quantity Controls & Subtotal Column -->
+            <td style="padding: 16px; vertical-align: middle">
+              <div class="items" style="margin-bottom: 10px">
+                <label
+                  style="
+                    font-weight: 600;
+                    color: #475569;
+                    margin-bottom: 6px;
+                    display: block;
+                  "
+                  >Quantity:</label
+                >
+
+                <div style="display: flex; align-items: center; gap: 8px">
+                  <button
+                    (click)="incrementQuantity(tempCartItem)"
+                    class="btn btn-primary btn-sm"
+                    style="
+                      background-color: #0284c7;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 14px;
+                    "
+                  >
+                    +
+                  </button>
+
+                  <span
+                    style="
+                      font-size: 15px;
+                      font-weight: 700;
+                      color: #0f172a;
+                      min-width: 20px;
+                      text-align: center;
+                    "
+                    >{{ tempCartItem.quantity }}</span
+                  >
+
+                  <button
+                    (click)="decrementQuantity(tempCartItem)"
+                    class="btn btn-primary btn-sm"
+                    style="
+                      background-color: #0284c7;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: bold;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 14px;
+                    "
+                  >
+                    -
+                  </button>
+
+                  <button
+                    (click)="removeItem(tempCartItem)"
+                    class="btn btn-danger"
+                    style="
+                      background-color: #ef4444;
+                      color: white;
+                      border: none;
+                      padding: 4px 12px;
+                      font-weight: 600;
+                      cursor: pointer;
+                      border-radius: 6px;
+                      font-size: 13px;
+                      margin-left: 8px;
+                    "
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+
+              <p
+                class="mt-2"
+                style="
+                  font-size: 15px;
+                  font-weight: 600;
+                  color: #334155;
+                  margin: 8px 0 0 0;
+                "
+              >
+                Subtotal:
+                {{
+                  tempCartItem.quantity * tempCartItem.unitPrice
+                    | currency: "USD"
+                }}
+              </p>
+            </td>
+          </tr>
+
+          <!-- Summary Row -->
+          <tr style="background-color: #f8fafc">
+            <td
+              colspan="2"
+              style="
+                padding: 16px;
+                font-size: 18px;
+                font-weight: 700;
+                color: #0f172a;
+                text-align: right;
+              "
+            >
+              Cart Summary
+            </td>
+            <td
+              style="
+                padding: 16px;
+                font-weight: 600;
+                color: #1e293b;
+                font-size: 15px;
+              "
+            >
+              <p style="margin: 4px 0">
+                Total Quantity: <strong>{{ totalQuantity }}</strong>
+              </p>
+              <p style="margin: 4px 0; color: #16a34a">
+                Shipping: <strong>FREE</strong>
+              </p>
+              <p style="margin: 4px 0; font-size: 18px; color: #0284c7">
+                Total Price: <strong>{{ totalPrice | currency: "USD" }}</strong>
+              </p>
+
+              <div *ngIf="cartItems.length !== 0" style="margin-top: 12px">
+                <a
+                  routerLink="/checkout"
+                  class="btn btn-primary"
+                  style="
+                    background-color: #0f172a;
+                    color: white;
+                    padding: 10px 20px;
+                    text-decoration: none;
+                    border-radius: 8px;
+                    display: inline-block;
+                    font-weight: 600;
+                    font-size: 14px;
+                    transition: background 0.2s ease;
+                  "
+                >
+                  Proceed To Checkout
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty Cart Alert -->
+      <div
+        *ngIf="cartItems.length === 0"
+        class="alert alert-warning col-md-12"
+        role="alert"
+        style="
+          background-color: #fef3c7;
+          color: #92400e;
+          padding: 20px 24px;
+          border-radius: 10px;
+          border: 1px solid #fde68a;
+          font-size: 16px;
+          font-weight: 500;
+        "
+      >
+        Your shopping cart is empty.
+      </div>
+    </div>
+  </div>
+</div>
+=== src/app/components/cart-details/cart-details.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { CartService } from '../../services/cart';
+import { CartItem } from '../../models/cart-items';
+
+@Component({
+  selector: 'app-cart-details',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './cart-details.html',
+  styleUrl: './cart-details.css',
+})
+export class CartDetailsComponent implements OnInit {
+  cartItems: CartItem[] = [];
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.listCartDetails();
+  }
+
+  listCartDetails(): void {
+    // Access cart items from cart service
+    this.cartItems = this.cartService.cartItems;
+
+    // Subscribe to cart total price
+    this.cartService.totalPrice.subscribe((data) => (this.totalPrice = data));
+
+    // Subscribe to cart total quantity
+    this.cartService.totalQuantity.subscribe(
+      (data) => (this.totalQuantity = data),
+    );
+
+    // Compute cart totals
+    this.cartService.computeCartTotals();
+  }
+
+  incrementQuantity(theCartItem: CartItem): void {
+    this.cartService.addToCart(theCartItem);
+  }
+
+  decrementQuantity(theCartItem: CartItem): void {
+    this.cartService.decrementQuantity(theCartItem);
+  }
+
+  removeItem(theCartItem: CartItem): void {
+    this.cartService.remove(theCartItem);
+  }
+}
+=== src/app/components/checkout/checkout.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CartService } from '../../services/cart';
+import { CheckoutService } from '../../services/checkout';
+import { PaymentService } from '../../services/payment';
+import { Purchaseorder } from '../../dto/purchaseorder';
+import { Customer } from '../../dto/customer';
+import { Address } from '../../dto/address';
+import { Order } from '../../dto/order';
+import { Orderitems } from '../../dto/orderitems';
+
+@Component({
+  selector: 'app-checkout',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './checkout.html',
+  styleUrl: './checkout.css',
+})
+export class CheckoutComponent implements OnInit {
+  checkoutFormGroup!: FormGroup;
+
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private cartService: CartService,
+    private checkoutService: CheckoutService,
+    private paymentService: PaymentService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    this.reviewCartDetails();
+
+    this.checkoutFormGroup = this.formBuilder.group({
+      customer: this.formBuilder.group({
+        name: [''],
+        email: [''],
+        phno: [''],
+      }),
+      shippingAddress: this.formBuilder.group({
+        hno: [''],
+        street: [''],
+        city: [''],
+        state: [''],
+        zipCode: [''],
+      }),
+    });
+  }
+
+  reviewCartDetails(): void {
+    this.cartService.totalQuantity.subscribe(
+      (data) => (this.totalQuantity = data),
+    );
+
+    this.cartService.totalPrice.subscribe((data) => (this.totalPrice = data));
+  }
+
+  onSubmit(): void {
+    console.log('Purchase button clicked!');
+
+    let orderDto = new Order(this.totalQuantity, this.totalPrice);
+    const cartItems = this.cartService.cartItems;
+    let orderItemDtoList: Orderitems[] = cartItems.map(
+      (tempCartItem) => new Orderitems(tempCartItem),
+    );
+
+    const customerFormValues =
+      this.checkoutFormGroup.controls['customer'].value;
+    const addressFormValues =
+      this.checkoutFormGroup.controls['shippingAddress'].value;
+
+    let purchase = new Purchaseorder();
+
+    purchase.customerDto = new Customer(
+      customerFormValues.name,
+      customerFormValues.email,
+      customerFormValues.phno,
+    );
+
+    purchase.addressDto = new Address(
+      addressFormValues.street,
+      addressFormValues.city,
+      addressFormValues.state,
+      addressFormValues.zipCode,
+      addressFormValues.hno,
+    );
+
+    purchase.orderDto = orderDto;
+    purchase.orderItemDtoList = orderItemDtoList;
+
+    // Make backend API call to create order
+    this.checkoutService.placeOrder(purchase).subscribe({
+      next: (response) => {
+        const responseData = response.data;
+        const razorpayOrderId = responseData.razorpayOrderId;
+        const trackingNum = responseData.orderTrackingNumber; // Extract tracking number
+
+        // Open Razorpay payment gateway modal
+        this.paymentService.processPayment(
+          razorpayOrderId,
+          trackingNum, // Passed tracking number to handle DB update callback
+          this.totalPrice,
+          customerFormValues.email,
+          customerFormValues.phno,
+          () => {
+            // On Payment Success: clear cart and navigate
+            this.cartService.clearCart();
+            this.router.navigateByUrl('/order-confirmation');
+          },
+        );
+      },
+      error: (err) => {
+        console.error('Order creation failed:', err);
+        alert('Could not create order. Check console.');
+      },
+    });
+  }
+
+  onPaymentSuccess(paymentResponse: any): void {
+    console.log('Payment Successful:', paymentResponse);
+    alert('Payment Successful! Order Confirmed.');
+
+    this.cartService.clearCart();
+    this.checkoutFormGroup.reset();
+    this.router.navigateByUrl('/order-confirmation');
+  }
+}
+=== src/app/components/checkout/checkout.html ===
+<div class="main-content page-m" style="padding: 20px 0">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid" style="max-width: 900px; margin: 0 auto">
+      <form
+        [formGroup]="checkoutFormGroup"
+        (ngSubmit)="onSubmit()"
+        style="
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+        "
+      >
+        <!-- Customer Form Group -->
+        <div
+          formGroupName="customer"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Customer Details
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Name</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="name"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Email</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="email"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Phone No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="phno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address Form Group -->
+        <div
+          formGroupName="shippingAddress"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Shipping Address
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>House No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="hno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Street</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="street"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>City</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="city"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>State</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="state"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Zip Code</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="zipCode"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Details Review -->
+        <div
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 18px;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+          >
+            Review Your Order
+          </h3>
+          <p style="margin: 6px 0; font-size: 15px; color: #334155">
+            Total Quantity: <strong>{{ totalQuantity }}</strong>
+          </p>
+          <p style="margin: 6px 0; font-size: 15px; color: #16a34a">
+            Shipping: <strong>FREE</strong>
+          </p>
+          <p
+            style="
+              margin: 6px 0;
+              font-size: 18px;
+              font-weight: 700;
+              color: #0284c7;
+            "
+          >
+            Total Price: {{ totalPrice | currency: "USD" }}
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center" style="text-align: center">
+          <button
+            type="submit"
+            class="btn btn-info"
+            style="
+              background-color: #0f172a;
+              color: #ffffff;
+              border: none;
+              padding: 12px 35px;
+              border-radius: 8px;
+              font-weight: 600;
+              font-size: 16px;
+              cursor: pointer;
+              transition: background 0.2s ease;
+            "
+          >
+            Purchase
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+=== src/app/components/product-category-menu/product-category-menu.html ===
+<aside
+  style="
+    width: 240px;
+    background-color: #0f172a;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 25px 20px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.05);
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <!-- Modern Logo Branding -->
+  <div
+    style="
+      margin-bottom: 35px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 20px;
+    "
+  >
+    <a routerLink="/" style="text-decoration: none">
+      <h2
+        style="
+          color: #38bdf8;
+          font-weight: 800;
+          font-size: 22px;
+          margin: 0;
+          letter-spacing: 1px;
+        "
+      >
+        STORE<span style="color: #ffffff">FRONT</span>
+      </h2>
+    </a>
+  </div>
+
+  <!-- Category Navigation Menu -->
+  <div class="menu-sidebar-content">
+    <nav class="navbar-sidebar">
+      <h4
+        style="
+          font-size: 11px;
+          text-transform: uppercase;
+          color: #94a3b8;
+          letter-spacing: 1.5px;
+          margin-bottom: 15px;
+          font-weight: 700;
+        "
+      >
+        Categories
+      </h4>
+      <ul style="padding-left: 0; list-style: none; margin: 0">
+        <li
+          *ngFor="let tempCategory of productCategories"
+          style="margin-bottom: 8px"
+        >
+          <a
+            [routerLink]="['/category', tempCategory.categoryId]"
+            routerLinkActive="active-category"
+            style="
+              text-decoration: none;
+              color: #cbd5e1;
+              font-size: 15px;
+              font-weight: 500;
+              display: block;
+              padding: 10px 14px;
+              border-radius: 8px;
+              transition: all 0.2s ease;
+            "
+          >
+            {{ tempCategory.categoryName }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</aside>
+=== src/app/components/product-category-menu/product-category-menu.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ProductService } from '../../services/product';
+import { ProductCategory } from '../../models/product-category';
+
+@Component({
+  selector: 'app-product-category-menu',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './product-category-menu.html',
+  styleUrl: './product-category-menu.css',
+})
+export class ProductCategoryMenuComponent implements OnInit {
+  productCategories: ProductCategory[] = [];
+
+  constructor(private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.listProductCategories();
+  }
+
+  listProductCategories(): void {
+    this.productService.getAllCategories().subscribe((res) => {
+      this.productCategories = res.data;
+    });
+  }
+}
+=== src/app/components/search/search.ts ===
+import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-search',
+  standalone: true,
+  templateUrl: './search.html',
+  styleUrl: './search.css',
+})
+export class SearchComponent {
+  constructor(private router: Router) {}
+
+  doSearch(value: string): void {
+    if (value && value.trim() !== '') {
+      this.router.navigateByUrl(`/search/${value.trim()}`);
+    }
+  }
+}
+=== src/app/components/search/search.html ===
+<div
+  style="
+    display: flex;
+    align-items: center;
+    width: 480px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 25px;
+    overflow: hidden;
+  "
+>
+  <input
+    #myInput
+    type="text"
+    placeholder="Search products, brands, categories..."
+    (keyup.enter)="doSearch(myInput.value)"
+    style="
+      border: none;
+      padding: 12px 22px;
+      width: 100%;
+      outline: none;
+      font-size: 15px;
+      color: #1e293b;
+      background-color: #ffffff;
+    "
+  />
+
+  <button
+    type="button"
+    (click)="doSearch(myInput.value)"
+    style="
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    "
+  >
+    Search
+  </button>
+</div>
+=== src/app/components/register/register.html ===
+<form (ngSubmit)="onRegister()" #registerForm="ngForm">
+  <!-- Name Input -->
+  <div class="form-group mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input
+      type="text"
+      id="name"
+      class="form-control"
+      placeholder="Enter full name"
+      [(ngModel)]="customer.name"
+      name="name"
+      required
+    />
+  </div>
+
+  <!-- Email Input -->
+  <div class="form-group mb-3">
+    <label for="email" class="form-label">Email Address</label>
+    <input
+      type="email"
+      id="email"
+      class="form-control"
+      placeholder="e.g. john@example.com"
+      [(ngModel)]="customer.email"
+      name="email"
+      required
+    />
+  </div>
+
+  <!-- Phone Number Input -->
+  <div class="form-group mb-3">
+    <label for="phoneNo" class="form-label">Phone Number</label>
+    <input
+      type="text"
+      id="phoneNo"
+      class="form-control"
+      placeholder="e.g. 9876543210"
+      [(ngModel)]="customer.phoneNo"
+      name="phoneNo"
+      required
+    />
+  </div>
+
+  <!-- Submit Button -->
+  <button
+    type="submit"
+    class="btn btn-primary btn-submit w-100"
+    [disabled]="!registerForm.form.valid"
+  >
+    Register Account
+  </button>
+</form>
+=== src/app/components/register/register.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CustomerDto } from '../../dto/customer-dto';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './register.html',
+  styleUrls: ['./register.css'],
+})
+export class RegisterComponent implements OnInit {
+  customer: CustomerDto = {
+    name: '',
+    email: '',
+    phoneNo: '',
+    password: '',
+    pwdUpdated: 'No',
+  };
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {}
+
+  onRegister(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.authService.register(this.customer).subscribe({
+      next: (response: any) => {
+        this.successMessage =
+          'Registration successful! Temporary password sent to your email.';
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (err: any) => {
+        this.errorMessage =
+          err.error?.message || 'Registration failed. Email may already exist.';
+      },
+    });
+  }
+}
+=== src/app/components/order-confirmation/order-confirmation.ts ===
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+
+@Component({
+  selector: 'app-order-confirmation',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './order-confirmation.html',
+  styleUrl: './order-confirmation.css',
+})
+export class OrderConfirmationComponent {}
+=== src/app/components/order-confirmation/order-confirmation.spec.ts ===
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { OrderConfirmation } from './order-confirmation';
+
+describe('OrderConfirmation', () => {
+  let component: OrderConfirmation;
+  let fixture: ComponentFixture<OrderConfirmation>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [OrderConfirmation]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(OrderConfirmation);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+=== src/app/components/order-confirmation/order-confirmation.html ===
+<div
+  class="container text-center"
+  style="padding: 60px 20px; max-width: 600px; margin: 0 auto"
+>
+  <div
+    style="
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    "
+  >
+    <div style="font-size: 60px; color: #16a34a; margin-bottom: 20px">✓</div>
+    <h2 style="color: #0f172a; font-weight: 700; margin-bottom: 10px">
+      Order Placed Successfully!
+    </h2>
+    <p style="color: #64748b; font-size: 16px; margin-bottom: 30px">
+      Thank you for your purchase. Your payment has been confirmed and your
+      order is being processed.
+    </p>
+    <a
+      routerLink="/products"
+      class="btn"
+      style="
+        background-color: #0f172a;
+        color: #ffffff;
+        padding: 12px 30px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+      "
+    >
+      Continue Shopping
+    </a>
+  </div>
+</div>
+=== src/app/components/reset-password/reset-password.html ===
+<
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Unlock Your Account</h2>
+      <p class="auth-subtitle">
+        Please enter your temporary password and set a new permanent password
+      </p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onResetPassword()" #resetForm="ngForm">
+      <!-- Email (Read-Only) -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control readonly-input"
+          [(ngModel)]="resetPwdDto.email"
+          name="email"
+          readonly
+        />
+      </div>
+
+      <!-- Temporary / Old Password -->
+      <div class="form-group mb-3">
+        <label for="oldPwd" class="form-label">Temporary Password</label>
+        <input
+          type="password"
+          id="oldPwd"
+          class="form-control"
+          placeholder="Enter temporary password from email"
+          [(ngModel)]="resetPwdDto.oldPwd"
+          name="oldPwd"
+          required
+        />
+      </div>
+
+      <!-- New Password -->
+      <div class="form-group mb-3">
+        <label for="newPwd" class="form-label">New Password</label>
+        <input
+          type="password"
+          id="newPwd"
+          class="form-control"
+          placeholder="Enter new permanent password"
+          [(ngModel)]="resetPwdDto.newPwd"
+          name="newPwd"
+          required
+        />
+      </div>
+
+      <!-- Confirm New Password -->
+      <div class="form-group mb-4">
+        <label for="confirmPwd" class="form-label">Confirm New Password</label>
+        <input
+          type="password"
+          id="confirmPwd"
+          class="form-control"
+          placeholder="Re-enter new password"
+          [(ngModel)]="resetPwdDto.confirmPwd"
+          name="confirmPwd"
+          required
+        />
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-submit w-100"
+        [disabled]="!resetForm.form.valid"
+      >
+        Update Password & Unlock
+      </button>
+    </form>
+
+    <!-- Navigation Link -->
+    <div class="auth-footer text-center mt-4">
+      <p>
+        Remembered your password?
+        <a routerLink="/login" class="auth-link">Back to Sign In</a>
+      </p>
+    </div>
+  </div>
+</div>
+=== src/app/components/reset-password/reset-password.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { ResetPwdDto } from '../../dto/reset-pwd_dto';
+
+@Component({
+  selector: 'app-reset-password',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './reset-password.html',
+  styleUrls: ['./reset-password.css'],
+})
+export class ResetPasswordComponent implements OnInit {
+  resetPwdDto: ResetPwdDto = {
+    email: '',
+    oldPwd: '',
+    newPwd: '',
+    confirmPwd: '',
+  };
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    // Extract target email from query params
+    this.route.queryParams.subscribe((params) => {
+      if (params['email']) {
+        this.resetPwdDto.email = params['email'];
+      }
+    });
+  }
+
+  onResetPassword(): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (this.resetPwdDto.newPwd !== this.resetPwdDto.confirmPwd) {
+      this.errorMessage = 'New password and confirm password do not match.';
+      return;
+    }
+
+    this.authService.resetPassword(this.resetPwdDto).subscribe({
+      next: (response) => {
+        this.successMessage =
+          'Password updated successfully! Redirecting to products...';
+        setTimeout(() => {
+          this.router.navigate(['/products']);
+        }, 1500);
+      },
+      error: (err) => {
+        this.errorMessage =
+          err.error?.message ||
+          'Failed to update password. Please check your temporary password.';
+      },
+    });
+  }
+}
+=== src/app/components/cart-status/cart-status.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterModule } from '@angular/router';
+import { CartService } from '../../services/cart';
+
+@Component({
+  selector: 'app-cart-status',
+  standalone: true,
+  imports: [CommonModule, RouterModule, RouterLink],
+  templateUrl: './cart-status.html',
+  styleUrl: './cart-status.css',
+})
+export class CartStatusComponent implements OnInit {
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit(): void {
+    this.updateCartStatus();
+  }
+
+  updateCartStatus(): void {
+    this.cartService.totalPrice.subscribe((data) => (this.totalPrice = data));
+
+    this.cartService.totalQuantity.subscribe(
+      (data) => (this.totalQuantity = data),
+    );
+  }
+}
+=== src/app/components/cart-status/cart-status.html ===
+<div
+  class="cart-area"
+  style="
+    background-color: #006699;
+    color: white;
+    border-radius: 25px;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+  "
+>
+  <a
+    routerLink="/cart-details"
+    style="
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    "
+  >
+    <span style="font-weight: bold; margin-right: 15px; font-size: 18px">{{
+      totalPrice | currency: "USD"
+    }}</span>
+    <span
+      style="
+        background-color: white;
+        color: black;
+        border-radius: 50%;
+        padding: 4px 12px;
+        font-weight: bold;
+        font-size: 16px;
+      "
+      >{{ totalQuantity }}</span
+    >
+  </a>
+</div>
+=== src/app/components/Login/login.ts ===
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CustomerDto } from '../../dto/customer-dto'; // or '../../dto/customer' depending on which file you want to use
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.css'],
+})
+export class LoginComponent {
+  credentials: CustomerDto = {
+    email: '',
+    password: '',
+  };
+
+  errorMessage: string = '';
+  successMessage: string = '';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
+
+  onLogin(): void {
+    this.errorMessage = '';
+    this.authService.login(this.credentials).subscribe({
+      next: (response) => {
+        if (response.status === 200 && response.data) {
+          const user = response.data;
+
+          // Check if user is logging in with temporary password
+          if (user.pwdUpdated === 'NO' || user.pwdUpdated === 'No') {
+            // Redirect to reset password page passing email
+            this.router.navigate(['/reset-password'], {
+              queryParams: { email: user.email },
+            });
+          } else {
+            // Normal login success -> save session and navigate to storefront/checkout
+            this.authService.saveUserSession(user);
+            this.router.navigate(['/products']);
+          }
+        } else {
+          this.errorMessage = response.msg || 'Invalid Credentials';
+        }
+      },
+      error: (err) => {
+        this.errorMessage =
+          err.error?.msg || 'Invalid Email or Temporary Password';
+      },
+    });
+  }
+}
+=== src/app/components/Login/login.html ===
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Welcome Back</h2>
+      <p class="auth-subtitle">Please sign in to your customer account</p>
+    </div>
+
+    <!-- Alert Banners -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-circle-fill me-2"></i> {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <!-- Email Field -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-icon-wrapper">
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            placeholder="e.g. john@example.com"
+            [(ngModel)]="credentials.email"
+            name="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group mb-4">
+        <label for="password" class="form-label"
+          >Password / Temporary Password</label
+        >
+        <div class="input-icon-wrapper">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter your password"
+            [(ngModel)]="credentials.password"
+            name="password"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-submit w-100"
+        [disabled]="!loginForm.form.valid"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <!-- Navigation Link -->
+    <div class="auth-footer text-center mt-4">
+      <p>
+        Don't have an account?
+        <a routerLink="/register" class="auth-link">Register Here</a>
+      </p>
+    </div>
+  </div>
+</div>
+=== src/app/components/header/header.ts ===
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CustomerDto } from '../../dto/customer-dto';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './header.html',
+  styleUrls: ['./header.css'],
+})
+export class AppComponent implements OnInit {
+  loggedUser: CustomerDto | null = null;
+  cartItemCount = 0;
+
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+  ) {}
+
+  ngOnInit(): void {
+    // Check logged user state on initialization
+    this.loggedUser = this.authService.getLoggedUser();
+  }
+
+  isLoggedIn(): boolean {
+    return this.authService.getLoggedUser() !== null;
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.loggedUser = null;
+    alert('Logged out successfully!');
+    this.router.navigate(['/login']);
+  }
+}
+=== src/app/components/header/header.html ===
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary px-4">
+  <a class="navbar-brand fw-bold" routerLink="/">STOREFRONT</a>
+
+  <div class="collapse navbar-collapse justify-content-end">
+    <ul class="navbar-nav align-items-center gap-3">
+      <!-- Search & Cart Links -->
+      <li class="nav-item">
+        <a class="nav-link text-white" routerLink="/cart">
+          Cart
+          <span class="badge bg-warning text-dark">{{ cartItemCount }}</span>
+        </a>
+      </li>
+
+      <!-- IF LOGGED IN: Show Logout Button and User Email -->
+      <ng-container *ifLoggedIn="true; else loggedOutBlock">
+        <li class="nav-item text-white me-2">
+          <i class="bi bi-person-circle me-1"></i> {{ loggedUser?.email }}
+        </li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light btn-sm" (click)="onLogout()">
+            Logout
+          </button>
+        </li>
+      </ng-container>
+
+      <!-- IF LOGGED OUT: Show Login Button -->
+      <ng-template #loggedOutBlock>
+        <li class="nav-item">
+          <a
+            class="btn btn-light btn-sm text-primary fw-bold"
+            routerLink="/login"
+          >
+            Login
+          </a>
+        </li>
+      </ng-template>
+    </ul>
+  </div>
+</nav>
+=== src/app/components/product-list/product-list.ts ===
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { ProductService } from '../../services/product';
+import { CartService } from '../../services/cart';
+import { Product } from '../../models/product';
+import { CartItem } from '../../models/cart-items';
+
+@Component({
+  selector: 'app-product-list',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './product-list.html',
+  styleUrl: './product-list.css',
+})
+export class ProductListComponent implements OnInit {
+  products: Product[] = [];
+  currentCategoryId: number = 1;
+  searchMode: boolean = false;
+
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private route: ActivatedRoute,
+  ) {}
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(() => {
+      this.listProducts();
+    });
+  }
+
+  listProducts(): void {
+    this.searchMode = this.route.snapshot.paramMap.has('keyword');
+
+    if (this.searchMode) {
+      this.handleSearchProducts();
+    } else {
+      this.handleListProducts();
+    }
+  }
+
+  handleListProducts(): void {
+    const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
+
+    if (hasCategoryId) {
+      this.currentCategoryId = +this.route.snapshot.paramMap.get('id')!;
+    } else {
+      this.currentCategoryId = 1;
+    }
+
+    this.productService
+      .getProductsByCategoryId(this.currentCategoryId)
+      .subscribe({
+        next: (res) => {
+          this.products = res.data || [];
+        },
+        error: (err) => {
+          console.error('API Error:', err);
+          this.products = [];
+        },
+      });
+  }
+
+  handleSearchProducts(): void {
+    const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
+
+    this.productService.searchProducts(theKeyword).subscribe({
+      next: (res) => {
+        this.products = res.data || [];
+      },
+      error: (err) => {
+        console.error('Search API Error:', err);
+        this.products = [];
+      },
+    });
+  }
+
+  addToCart(theProduct: Product): void {
+    console.log(`Adding to cart: ${theProduct.name}, ${theProduct.unitPrice}`);
+    const theCartItem = new CartItem(theProduct);
+    this.cartService.addToCart(theCartItem);
+  }
+}
+=== src/app/components/product-list/product-list.html ===
+<div class="container-fluid" style="padding: 0">
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    "
+  >
+    <!-- Product Card Loop -->
+    <div
+      *ngFor="let tempProduct of products"
+      style="
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      "
+    >
+      <div>
+        <div
+          style="
+            height: 180px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+          "
+        >
+          <img
+            [src]="tempProduct.imageUrl"
+            style="max-height: 100%; max-width: 100%; object-fit: contain"
+          />
+        </div>
+
+        <h4
+          style="
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 10px 0 6px 0;
+            line-height: 1.3;
+          "
+        >
+          {{ tempProduct.name }}
+        </h4>
+
+        <div
+          style="
+            color: #0284c7;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+          "
+        >
+          {{ tempProduct.unitPrice | currency: "USD" }}
+        </div>
+      </div>
+
+      <button
+        (click)="addToCart(tempProduct)"
+        style="
+          background-color: #0f172a;
+          color: #ffffff;
+          width: 100%;
+          padding: 10px 0;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        "
+      >
+        Add to cart
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty Product Alert -->
+  <div
+    *ngIf="products && products.length === 0"
+    style="
+      width: 100%;
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    "
+  >
+    <p style="font-size: 18px; color: #64748b; font-weight: 500; margin: 0">
+      No products available for this selection.
+    </p>
+  </div>
+</div>
+=== src/app/app.config.ts ===
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(), // Essential for ProductService HTTP requests
+  ],
+};
+=== src/app/app.html ===
+<div
+  class="page-wrapper"
+  style="
+    display: flex;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+  "
+>
+  <!-- Sidebar Component -->
+  <app-product-category-menu></app-product-category-menu>
+
+  <div
+    class="page-container"
+    style="flex-grow: 1; display: flex; flex-direction: column"
+  >
+    <!-- Header -->
+    <header
+      style="
+        background-color: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 16px 35px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      "
+    >
+      <!-- Integrated Search Component -->
+      <app-search></app-search>
+
+      <!-- Cart Status Component -->
+      <app-cart-status></app-cart-status>
+    </header>
+
+    <!-- Main Dynamic Content -->
+    <main style="flex-grow: 1; padding: 30px 35px">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+=== src/app/services/payment.ts ===
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { PaymentCallback } from '../dto/payment-callback';
+
+declare var Razorpay: any;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PaymentService {
+  private RAZORPAY_KEY = 'rzp_test_TrHevKGvKrxk05';
+
+  constructor(private httpClient: HttpClient) {}
+
+  processPayment(
+    orderId: string,
+    trackingNum: string,
+    amount: number,
+    customerEmail: string,
+    customerPhone: string,
+    successCallback?: (response: any) => void,
+  ): void {
+    const options: any = {
+      key: this.RAZORPAY_KEY,
+      amount: Math.round(amount * 100),
+      currency: 'INR',
+      name: 'StoreFront E-Commerce',
+      description: 'Order Payment',
+      order_id: orderId,
+      handler: (response: any) => {
+        if (response && response.razorpay_payment_id) {
+          const paymentPayload = new PaymentCallback(
+            orderId,
+            response.razorpay_payment_id,
+            trackingNum,
+            response.razorpay_signature,
+          );
+
+          this.paymentCallBack(paymentPayload, successCallback, response);
+        }
+      },
+      prefill: {
+        name: 'Customer',
+        email: customerEmail,
+        contact: customerPhone,
+      },
+      theme: {
+        color: '#0f172a',
+      },
+    };
+
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+  }
+
+  paymentCallBack(
+    paymentCallback: PaymentCallback,
+    successCallback?: Function,
+    rawResponse?: any,
+  ): void {
+    this.httpClient
+      .put<any>('http://localhost:8081/order', paymentCallback)
+      .subscribe({
+        next: (response) => {
+          console.log('Payment callback & update success:', response);
+          if (successCallback) {
+            successCallback(rawResponse);
+          }
+        },
+        error: (error) => console.error('Payment callback failed:', error),
+      });
+  }
+}
+=== src/app/services/auth.service.ts ===
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CustomerDto } from '../dto/customer-dto';
+import { ResetPwdDto } from '../dto/reset-pwd_dto';
+import { ApiResponse } from '../dto/api-response';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthService {
+  // Point to 102_Customer_Api running on Port 8082
+  private baseUrl = 'http://localhost:8082';
+
+  constructor(private http: HttpClient) {}
+
+  /**
+   * Customer Login Endpoint (/login)
+   * Validates email & password, returns user info + pwdUpdated flag ("Yes" / "No")
+   */
+  login(customerDto: CustomerDto): Observable<ApiResponse<CustomerDto>> {
+    return this.http.post<ApiResponse<CustomerDto>>(
+      `${this.baseUrl}/login`,
+      customerDto,
+    );
+  }
+
+  /**
+   * Primary Registration Method (/customer)
+   * Sends customer payload to backend and triggers temporary password email via SMTP
+   */
+  register(customerDto: CustomerDto): Observable<ApiResponse<CustomerDto>> {
+    return this.http.post<ApiResponse<CustomerDto>>(
+      `${this.baseUrl}/customer`,
+      customerDto,
+    );
+  }
+
+  /**
+   * Alias for register() to fix registerComponent calls
+   */
+  registerUser(customerDto: CustomerDto): Observable<any> {
+    return this.register(customerDto);
+  }
+
+  /**
+   * Password Reset Endpoint (/reset-pwd)
+   * Takes temporary password + new password and updates user state (pwdUpdated = "Yes")
+   */
+  resetPassword(resetPwdDto: ResetPwdDto): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(
+      `${this.baseUrl}/reset-pwd`,
+      resetPwdDto,
+    );
+  }
+
+  // ==========================================
+  // Session & Local Storage Helper Methods
+  // ==========================================
+
+  saveUserSession(user: CustomerDto): void {
+    localStorage.setItem('loggedUser', JSON.stringify(user));
+  }
+
+  getLoggedUser(): CustomerDto | null {
+    const userStr = localStorage.getItem('loggedUser');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  logout(): void {
+    localStorage.removeItem('loggedUser');
+  }
+}
+=== src/app/services/product.ts ===
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { ApiResponse } from '../models/api-response';
+import { Product } from '../models/product';
+import { ProductCategory } from '../models/product-category';
+import { AppConstants } from '../constants/app-constants';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ProductService {
+  constructor(private http: HttpClient) {}
+
+  getAllCategories(): Observable<ApiResponse<ProductCategory[]>> {
+    return this.http.get<ApiResponse<ProductCategory[]>>(
+      `${AppConstants.PRODUCT_API}/categories`,
+    );
+  }
+
+  getProductsByCategoryId(
+    categoryId: number,
+  ): Observable<ApiResponse<Product[]>> {
+    return this.http.get<ApiResponse<Product[]>>(
+      `${AppConstants.PRODUCT_API}/products/${categoryId}`,
+    );
+  }
+
+  searchProducts(theKeyword: string): Observable<ApiResponse<Product[]>> {
+    return this.http.get<ApiResponse<Product[]>>(
+      `${AppConstants.PRODUCT_API}/products/search/${theKeyword}`,
+    );
+  }
+}
+=== src/app/services/checkout.ts ===
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Purchaseorder } from '../dto/purchaseorder';
+import { AppConstants } from '../constants/app-constants';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CheckoutService {
+  constructor(private httpClient: HttpClient) {}
+
+  placeOrder(purchase: Purchaseorder): Observable<any> {
+    return this.httpClient.post<Purchaseorder>(
+      AppConstants.ORDER_ENDPOINT,
+      purchase,
+    );
+  }
+}
+=== src/app/services/cart.ts ===
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { CartItem } from '../models/cart-items';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CartService {
+  cartItems: CartItem[] = [];
+
+  totalPrice: Subject<number> = new BehaviorSubject<number>(0);
+  totalQuantity: Subject<number> = new BehaviorSubject<number>(0);
+
+  constructor() {}
+
+  addToCart(theCartItem: CartItem): void {
+    let alreadyExistsInCart: boolean = false;
+    let existingCartItem: CartItem | undefined = undefined;
+
+    if (this.cartItems.length > 0) {
+      for (let tempCartItem of this.cartItems) {
+        if (tempCartItem.id === theCartItem.id) {
+          existingCartItem = tempCartItem;
+          alreadyExistsInCart = true;
+          break;
+        }
+      }
+    }
+
+    if (alreadyExistsInCart && existingCartItem) {
+      existingCartItem.quantity++;
+    } else {
+      this.cartItems.push(theCartItem);
+    }
+
+    this.computeCartTotals();
+  }
+
+  computeCartTotals(): void {
+    let totalPriceValue: number = 0;
+    let totalQuantityValue: number = 0;
+
+    for (let currentCartItem of this.cartItems) {
+      totalPriceValue += currentCartItem.quantity * currentCartItem.unitPrice;
+      totalQuantityValue += currentCartItem.quantity;
+    }
+
+    this.totalPrice.next(totalPriceValue);
+    this.totalQuantity.next(totalQuantityValue);
+  }
+
+  decrementQuantity(theCartItem: CartItem): void {
+    theCartItem.quantity--;
+
+    if (theCartItem.quantity === 0) {
+      this.remove(theCartItem);
+    } else {
+      this.computeCartTotals();
+    }
+  }
+  clearCart(): void {
+    this.cartItems = [];
+    this.totalPrice.next(0);
+    this.totalQuantity.next(0);
+  }
+  remove(theCartItem: CartItem): void {
+    const itemIndex = this.cartItems.findIndex(
+      (tempCartItem) => tempCartItem.id === theCartItem.id,
+    );
+
+    if (itemIndex > -1) {
+      this.cartItems.splice(itemIndex, 1);
+      this.computeCartTotals();
+    }
+  }
+}
+=== src/main.ts ===
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app';
+
+bootstrapApplication(AppComponent, appConfig).catch((err) =>
+  console.error(err),
+);

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.7</version>
+        <relativePath/>
+    </parent>
+    <groupId>in.ashokit</groupId>
+    <artifactId>04-notifications-api</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>04-notifications-api</name>
+    <description>E-commerce notification service</description>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+<!doctype html>
+<html><body style="font-family:Arial,sans-serif">
+<h2>A special offer for you</h2>
+<p>Hello {{customerName}},</p>
+<p>Thank you for being our customer. Check our store for current offers.</p>
+</body></html>
+<!doctype html>
+<html><body style="font-family:Arial,sans-serif">
+<h2>Delivery update</h2>
+<p>Hello {{customerName}},</p>
+<p>Your order is scheduled for delivery today.</p>
+<p>Tracking number: {{trackingNumber}}</p>
+<p>Delivery date: {{deliveryDate}}</p>
+</body></html>
+<!doctype html>
+<html><body style="font-family:Arial,sans-serif">
+<h2>Order cancellation update</h2>
+<p>Hello {{customerName}},</p>
+<p>This is an update about your order {{orderId}}.</p>
+<p>Tracking number: {{trackingNumber}}</p>
+<p>Current order status: {{orderStatus}}</p>
+<p>If you did not request this cancellation, please contact customer support.</p>
+</body></html>
+<!doctype html>
+<html><body style="font-family:Arial,sans-serif">
+<h2>Order confirmed</h2>
+<p>Hello {{customerName}},</p>
+<p>Thank you for your order. Here are your order details:</p>
+<ul>
+<li>Order ID: {{orderId}}</li>
+<li>Tracking number: {{trackingNumber}}</li>
+<li>Order status: {{orderStatus}}</li>
+<li>Payment status: {{paymentStatus}}</li>
+<li>Total: {{totalPrice}}</li>
+</ul>
+<p>Thank you for shopping with us.</p>
+</body></html>
+spring.application.name=04-notifications-api
+
+
+spring.main.allow-circular-references=true
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/Comm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=Leo@12345
+server.port=8083
+
+spring.jpa.hibernate.ddl-auto=none
+
+#SMTP Properties
+ spring.mail.host=smtp.gmail.com
+ spring.mail.port=587
+ spring.mail.username=sahill.warhade@gmail.com
+ spring.mail.password=lyixrklledxjjsrw
+ spring.mail.properties.mail.smtp.auth=true
+ spring.mail.properties.mail.smtp.starttls.enable=true
+ spring.mail.properties.mail.smtp.starttls.required=true
+
+springdoc.swagger-ui.path=/swagger-ui.html
+package in.ashokit;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "shipping_addr")
+@Getter
+@Setter
+public class ShippingAddressEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "addr_id")
+    private Integer addrId;
+
+    @Column(name = "hno")
+    private String hno;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "zip_code")
+    private String zipCode;
+
+    @Column(name = "addr_type")
+    private String addrType;
+
+    @Column(name = "delete_sw")
+    private String deleteSw;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "order_items")
+@Getter
+@Setter
+public class OrderItemEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "item_id")
+    private Integer itemId;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "unit_price")
+    private Double unitPrice;
+
+    @Column(name = "product_name")
+    private String productName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private OrderEntity order;
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "customer")
+@Getter
+@Setter
+public class CustomerEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_id")
+    private Integer customerId;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "email")
+    private String email;
+
+    // Included to map the existing Customer API table; never use this field in notifications.
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "pwd_updated")
+    private String pwdUpdated;
+
+    @Column(name = "phone_no")
+    private String phoneNo;
+
+    @Column(name = "date_created")
+    private LocalDate dateCreated;
+
+    @Column(name = "last_updated")
+    private LocalDate lastUpdated;
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "orders")
+@Getter
+@Setter
+public class OrderEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "order_id")
+    private Integer orderId;
+
+    @Column(name = "order_tracking_num")
+    private String orderTrackingNum;
+
+    @Column(name = "total_price")
+    private Double totalPrice;
+
+    @Column(name = "total_quantity")
+    private Integer totalQuantity;
+
+    @Column(name = "order_status")
+    private String orderStatus;
+
+    // The reference Order API uses the spelling "deliveyDate".
+    @Column(name = "delivey_date")
+    private LocalDate deliveyDate;
+
+    @Column(name = "payment_status")
+    private String paymentStatus;
+
+    @Column(name = "razorpay_order_id")
+    private String razorpayOrderId;
+
+    @Column(name = "razorpay_payment_id")
+    private String razorpayPaymentId;
+
+    @Column(name = "date_created")
+    private LocalDateTime dateCreated;
+
+    @Column(name = "date_updated")
+    private LocalDateTime dateUpdated;
+
+    @Column(name = "customer_email")
+    private String customerEmail;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "addr_id")
+    private ShippingAddressEntity shippingAddress;
+}
+package in.ashokit.service;
+
+import in.ashokit.entity.CustomerEntity;
+import in.ashokit.entity.OrderEntity;
+import in.ashokit.entity.OrderItemEntity;
+import in.ashokit.repo.CustomerRepository;
+import in.ashokit.repo.OrderItemRepository;
+import in.ashokit.repo.OrderRepository;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class NotificationServiceImpl implements NotificationService {
+    private final OrderRepository orderRepository;
+    private final CustomerRepository customerRepository;
+    private final OrderItemRepository orderItemRepository;
+    private final EmailService emailService;
+
+    public NotificationServiceImpl(OrderRepository orderRepository,
+                                   CustomerRepository customerRepository,
+                                   OrderItemRepository orderItemRepository,
+                                   EmailService emailService) {
+        this.orderRepository = orderRepository;
+        this.customerRepository = customerRepository;
+        this.orderItemRepository = orderItemRepository;
+        this.emailService = emailService;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String sendOrderConfirmation(Integer orderId) {
+        OrderEntity order = getOrder(orderId);
+        CustomerEntity customer = resolveCustomer(order);
+        String body = loadTemplate("templates/order-confirmation.html")
+                .replace("{{customerName}}", safe(customer.getName()))
+                .replace("{{orderId}}", String.valueOf(order.getOrderId()))
+                .replace("{{trackingNumber}}", safe(order.getOrderTrackingNum()))
+                .replace("{{orderStatus}}", safe(order.getOrderStatus()))
+                .replace("{{paymentStatus}}", safe(order.getPaymentStatus()))
+                .replace("{{totalPrice}}", order.getTotalPrice() == null ? "N/A" : order.getTotalPrice().toString());
+        emailService.sendEmail(customer.getEmail(), "Order confirmation", body);
+        return "Order confirmation email sent for order " + orderId;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String sendCancellationNotification(Integer orderId) {
+        OrderEntity order = getOrder(orderId);
+        CustomerEntity customer = resolveCustomer(order);
+        String body = loadTemplate("templates/order-cancelled.html")
+                .replace("{{customerName}}", safe(customer.getName()))
+                .replace("{{orderId}}", String.valueOf(order.getOrderId()))
+                .replace("{{trackingNumber}}", safe(order.getOrderTrackingNum()))
+                .replace("{{orderStatus}}", safe(order.getOrderStatus()));
+        emailService.sendEmail(customer.getEmail(), "Order cancellation update", body);
+        return "Cancellation notification email sent for order " + orderId;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String sendDeliveryNotificationsForToday() {
+        List<OrderEntity> orders = orderRepository.findByDeliveyDate(LocalDate.now());
+        int sent = 0;
+        for (OrderEntity order : orders) {
+            try {
+                CustomerEntity customer = resolveCustomer(order);
+                String body = loadTemplate("templates/delivery-notification.html")
+                        .replace("{{customerName}}", safe(customer.getName()))
+                        .replace("{{trackingNumber}}", safe(order.getOrderTrackingNum()))
+                        .replace("{{deliveryDate}}", String.valueOf(order.getDeliveyDate()));
+                emailService.sendEmail(customer.getEmail(), "Delivery update for your order", body);
+                sent++;
+            } catch (RuntimeException ex) {
+                // Continue with other orders; the returned count reflects successful sends.
+            }
+        }
+        return "Delivery notifications sent: " + sent + " of " + orders.size();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String sendOfferNotifications() {
+        List<CustomerEntity> customers = customerRepository.findAll();
+        int sent = 0;
+        for (CustomerEntity customer : customers) {
+            if (customer.getEmail() == null || customer.getEmail().isBlank()) {
+                continue;
+            }
+            try {
+                String body = loadTemplate("templates/offer.html")
+                        .replace("{{customerName}}", safe(customer.getName()));
+                emailService.sendEmail(customer.getEmail(), "A special offer for you", body);
+                sent++;
+            } catch (RuntimeException ex) {
+                // Continue with other customers if one email fails.
+            }
+        }
+        return "Offer emails sent: " + sent + " of " + customers.size();
+    }
+
+    private OrderEntity getOrder(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found: " + orderId));
+    }
+
+    private CustomerEntity resolveCustomer(OrderEntity order) {
+        if (order.getCustomer() != null) {
+            return order.getCustomer();
+        }
+        if (order.getCustomerEmail() != null && !order.getCustomerEmail().isBlank()) {
+            return customerRepository.findByEmail(order.getCustomerEmail())
+                    .orElseThrow(() -> new IllegalArgumentException("Customer not found for order " + order.getOrderId()));
+        }
+        throw new IllegalArgumentException("Order has no customer or customer email: " + order.getOrderId());
+    }
+
+    private String loadTemplate(String path) {
+        try {
+            return new String(new ClassPathResource(path).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            throw new IllegalStateException("Unable to load email template: " + path, ex);
+        }
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+}
+package in.ashokit.service;
+
+public interface NotificationService {
+    String sendOrderConfirmation(Integer orderId);
+    String sendCancellationNotification(Integer orderId);
+    String sendDeliveryNotificationsForToday();
+    String sendOfferNotifications();
+}
+package in.ashokit.service;
+
+import jakarta.mail.internet.MimeMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class EmailService {
+    private final JavaMailSender mailSender;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void sendEmail(String to, String subject, String htmlBody) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(htmlBody, true);
+            mailSender.send(message);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to send notification email to " + to, ex);
+        }
+    }
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.CustomerEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface CustomerRepository extends JpaRepository<CustomerEntity, Integer> {
+    Optional<CustomerEntity> findByEmail(String email);
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.OrderEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<OrderEntity, Integer> {
+    List<OrderEntity> findByDeliveyDate(LocalDate deliveyDate);
+    List<OrderEntity> findByOrderStatusIgnoreCase(String orderStatus);
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.OrderItemEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface OrderItemRepository extends JpaRepository<OrderItemEntity, Integer> {
+    List<OrderItemEntity> findByOrderOrderId(Integer orderId);
+}
+package in.ashokit.rest;
+
+import in.ashokit.service.NotificationService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/notifications")
+public class NotificationRestController {
+    private final NotificationService notificationService;
+
+    public NotificationRestController(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
+    @PostMapping("/orders/{orderId}/confirmation")
+    public ResponseEntity<String> sendOrderConfirmation(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(notificationService.sendOrderConfirmation(orderId));
+    }
+
+    @PostMapping("/orders/{orderId}/cancellation")
+    public ResponseEntity<String> sendCancellation(@PathVariable Integer orderId) {
+        return ResponseEntity.ok(notificationService.sendCancellationNotification(orderId));
+    }
+
+    @PostMapping("/deliveries/today")
+    public ResponseEntity<String> sendDeliveriesToday() {
+        return ResponseEntity.ok(notificationService.sendDeliveryNotificationsForToday());
+    }
+
+    @PostMapping("/offers")
+    public ResponseEntity<String> sendOffers() {
+        return ResponseEntity.ok(notificationService.sendOfferNotifications());
+    }
+}

@@ -1,0 +1,10 @@
+a:hover {
+  background-color: #1e293b !important;
+  color: #38bdf8 !important;
+}
+
+.active-category {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}

@@ -1,0 +1,1479 @@
+=================================================================
+Step-2 : Retrieve Products From Backend and Display In Frontend
+=================================================================
+
+@@@@ (1) Create Product class to bind backend-app response in frontend-app
+
+$ ng generate dto/product
+
+export class Product {
+
+    constructor(
+        public id: number,
+        public name: string,
+        public description: string,
+        public title: string,
+        public unitPrice: number,
+        public imageUrl: string,
+        public active: boolean,
+        public unitsInStock: number,
+        public dateCreated: Date,
+        public lastUpdate: Date
+    ) {
+
+    }
+}
+
+@@@@ (2) Create AppConstants class under 'src' to configure backend-apis urls.
+
+export class AppConstants{
+    static PRODUCTS_ENDPOINT = "http://localhost:8080/products/1";    
+}
+
+@@@@ (3) Create Service class to make HTTP call to backend app 
+
+$ ng generate services/product 
+
+export class ProductService {
+
+  constructor(private http: HttpClient) { }
+
+  getAllProducts(): Observable<any> {
+    return this.http.get<any>(`${AppConstants.PRODUCTS_ENDPOINT}`);
+  }
+}
+
+@@@@ (4) Create Product-List Component
+
+$ ng g c components/product-list
+
+export class ProductListComponent implements OnInit {
+
+  products: Product[] = [];
+
+  constructor(private productService: ProductService) {}
+
+  ngOnInit(): void {
+    this.getAllProducts();
+  }
+
+  getAllProducts() {
+    this.productService.getAllProducts().subscribe(res => {
+      this.products = res.data;
+    })
+  }
+}
+
+@@@@ (5) Write Presentation Logic to Display Products Data in template
+    (product-list.component.html)
+
+<p *ngFor="let tempProduct of products">
+    {{tempProduct.name}} : {{tempProduct.unitPrice}}
+</p>
+
+@@@@ (6) invoke product-list component from AppComponent using selector.
+
+<app-product-list></app-product-list>
+
+@@@@ (7)) When we run angular app, we should see products data in browser.
+
+
+======================================================
+Step-3 : Beautify Products Display in Table Format
+======================================================
+
+@@@@ (1) Add bootstap link in index.html file 
+
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>EcommUi</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+@@@@ (2) Make below changes in app.component.html file 
+
+<div class="container">
+    <h2>Welcome to Ashok IT - Ecommerce Store</h2>
+    <app-product-list></app-product-list>
+</div>
+
+@@@@ (3) Make below changes in product.list.component.html file 
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Units in Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngIf="products && products.length === 0">
+            <td colspan="4" style="text-align:center;">No products available</td>
+        </tr>
+        <tr *ngFor="let tempProduct of products">
+            <td></td>
+            <td>{{tempProduct.name}}</td>
+            <td>{{tempProduct.unitPrice}}</td>
+            <td>{{tempProduct.unitsInStock}}</td>
+        </tr>
+    </tbody>
+</table>
+
+
+===========================================
+Step-4 : eCommerce Template Integration
+===========================================
+
+@@@@ (1) Download below zip file which contains images and styles.css 
+
+    URL : https://github.com/ashokitschool/Images.git
+
+@@@@( 2) Keep images folder in "angular project public folder" and keep "styles.css" file in src folder.
+
+@@@@ (3) Install bootstrap
+
+    $ npm install bootstrap@5.2.0
+
+@@@@ (4) Install FontAwesome     
+
+    $ npm install @fortawesome/fontawesome-free
+
+@@@@ (5) Verify installation entries in Node_Modules folder     
+
+@@@@ (6) Add Custom Styles in "angular.json" file 
+
+    "styles": [
+      "src/styles.css",
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
+    ],
+
+@@@@ (7) Modify app.component.html file
+
+<div class="page-wrapper">
+
+    <!-- MENU SIDEBAR-->
+    <aside class="menu-sidebar d-none d-lg-block">
+        <div class="logo">
+            <a href="#">
+                <img src="assets/images/logo.png" alt="ashokit" class="img-responsive">
+            </a>
+        </div>
+        <div class="menu-sidebar-content js-scrollbar1">
+            <nav class="navbar-sidebar">
+                <ul class="list-unstyled navbar-list">
+                    <li>
+                        <a href="#">Laptops</a>
+                    </li>
+                    <li>
+                        <a href="#">Mobiles</a>
+                    </li>
+                    <li>
+                        <a href="#">Shirts</a>
+                    </li>
+                    <li>
+                        <a href="#">Beauty</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </aside>
+    <!-- END MENU SIDEBAR-->
+
+    <div class="page-container">
+        <!-- HEADER DESKTOP-->
+        <header class="header-desktop">
+            <div class="section-content section-content-p30">
+                <div class="container-fluid">
+                    <div class="header-wrap">
+                        <form class="form-header" onsubmit="return false;" method="GET">
+                            <input class="au-input au-input-xl" type="text" name="search"
+                                placeholder="Search for data ..." />
+                            <button class="au-btn-submit" type="submit">
+                                Search
+                            </button>
+                        </form>
+                        <div class="cart-area d-n">
+                            <a href="shopping-detail.html">
+                                <div class="total">19.22 <span> 2</span> </div> <i class="fa fa-shopping-cart"
+                                    aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="account-wrap"></div>
+                </div>
+            </div>
+        </header>
+        <!-- END HEADER DESKTOP-->
+
+        <!-- MAIN CONTENT-->
+        <app-product-list></app-product-list>
+
+    </div>
+</div>
+
+<!-- ENDS PAGE CONTAINER -->
+
+<footer>
+    <ul>
+        <li><a href="#">About Us</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Help</a></li>
+    </ul>
+</footer>
+
+@@@@ (8) Modify product-list.component.html file to display products in grid format. 
+
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- loop over the collection of products -->
+                <div *ngFor="let tempProduct of products" class="col-md-3">
+
+                    <div class="product-box">
+                        <img src="{{ tempProduct.imageUrl }}" class="img-responsive">
+                        <h1>{{ tempProduct.name }}</h1>
+                        <div class="price">{{ tempProduct.unitPrice }}</div>
+                        <a href="#" class="primary-btn">Add to cart</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
+
+
+=========================================
+Step - 5 : Filter Products By Category 
+=========================================
+
+1) Configure Routings in app.routes.ts file
+
+export const routes: Routes = [
+
+    {path: 'category/:id', component: ProductListComponent},
+    {path: 'products', component: ProductListComponent},
+    {path: '', redirectTo: '/products', pathMatch: 'full'}
+];
+
+2) Configure routerlink in app.component.html file (hardcoded links)
+
+<nav class="navbar-sidebar">
+    <ul class="list-unstyled navbar-list">
+        <li>
+            <a routerLink="category/1" routerLinkActive="active-link">Laptops</a>
+        </li>
+        <li>
+            <a routerLink="category/2">Mobiles</a>
+        </li>
+        <li>
+            <a routerLink="category/3">Shirts</a>
+        </li>
+        <li>
+            <a routerLink="category/4">Beauty</a>
+        </li>
+    </ul>
+</nav>
+
+3) Configure  <router-outlet></router-outlet> in app.component.html file (remove selector to invoke product-list component).
+
+4) Create a method in product.service.ts file to get products based on given category id.
+
+ getProductsByCategoryId(theCategoryId: number): Observable<any> {
+    return this.http.get<any>(`${AppConstants.PRODUCTS_ENDPOINT}/${theCategoryId}`);
+  }
+
+5) Make changes to ProductList component to read categoryId from routerLink   
+
+export class ProductListComponent implements OnInit {
+
+  products: Product[] = [];
+  currentCategoryId = 1;
+
+  constructor(private productService: ProductService,
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+
+    this.route.paramMap.subscribe(() => {
+      this.getAllProducts();
+    })
+
+  }
+
+  getAllProducts() {
+
+    // check if "id" param is available
+
+    const hasCategoryId: boolean = this.route.snapshot.paramMap.has("id");
+
+    if (hasCategoryId) {
+      this.currentCategoryId = +this.route.snapshot.paramMap.get("id")!;
+    } else {
+      this.currentCategoryId = 1;
+    }
+
+    this.productService.getProductsByCategoryId(this.currentCategoryId).subscribe(res => {
+      this.products = res.data;
+    })
+  }
+}
+
+
+===================================================
+Step - 5 : Build Product Category Menu Dynamically
+===================================================
+
+@@@@ (1) Create ProductCategory class to map backend-api response
+
+$ ng g class dto/product-category
+
+export class ProductCategory {
+
+    constructor(public id: number,
+        public categoryName: string){}
+    
+}
+
+@@@@ (2) update product-service class to make backend call for category menu data 
+
+getAllCategories(): Observable<any> {
+    return this.http.get<any>(`${AppConstants.CATEGORY_ENDPOINT}`);
+}
+
+@@@@ (3) Create product-category-menu component 
+
+$ ng generate component components/product-category-menu
+
+export class ProductCategoryMenuComponent implements OnInit{
+
+  productCategories: ProductCategory[] = [];
+
+  constructor(private productService: ProductService){}
+
+  ngOnInit(): void {
+    this.listProductCategories();
+  }
+
+  listProductCategories(){
+    this.productService.getAllCategories().subscribe(res => {
+      this.productCategories = res.data;
+    })
+  }
+}
+
+@@@@ (4) Write Product-Category template logic to display menu
+
+<div class="menu-sidebar-content js-scrollbar1">
+    <nav class="navbar-sidebar">
+        <ul class="list-unstyled navbar-list">
+            <li *ngFor="let tempProductCategory of productCategories">
+                <a routerLink="category/{{tempProductCategory.id}}" routerLinkActive="active-link">
+                    {{tempProductCategory.categoryName}}
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+@@@@ (5) Remove static menu from app-component.html file and invoke product-category-menu using selector.
+
+ <app-product-category-menu></app-product-category-menu>
+
+
+========================================
+Step - 6 : Build Search Functionality
+========================================
+
+@@@@ (1) Configure routing in app.routes.ts file for search functionality
+
+{path: 'search/:keyword', component: ProductListComponent},
+
+@@@@ (2) Create search component
+
+$ ng generate component components/search
+
+export class SearchComponent {
+
+  constructor(private router: Router) { }
+
+  doSearch(value: string) {  
+    this.router.navigateByUrl(`/search/${value}`);
+  }
+}
+
+@@@@ (3) Write presentation logic for search component
+
+<div class="form-header">
+
+    <input #myInput type="text" 
+           placeholder="Search for products ..."
+           class="au-input au-input-xl"
+           (keyup)="doSearch(myInput.value)"  />
+
+    <button (click)="doSearch(myInput.value)" class="au-btn-submit">
+        Search
+    </button>
+
+</div>
+
+@@@@ (4) Invoke search component from app.component.html file 
+
+ <app-search></app-search>
+
+@@@@ (5) Create method in service class to handle search functionality backend api call
+
+searchProducts(theKeyword: string): Observable<any> {
+    return this.http.get<any>(`${AppConstants.PRODUCTS_SEARCH_ENDPOINT}/${theKeyword}`);
+} 
+
+@@@@ (6) Handle search operation in product-list-component.html
+
+    // check keyword presence in url
+    // if keyword present, call handle-search-products() with keyword
+    // if keyword not present, call handle-list-products() with category-id
+
+export class ProductListComponent implements OnInit {
+
+  products: Product[] = [];
+  currentCategoryId = 1;
+  searchMode: boolean = false;
+
+  constructor(private productService: ProductService,
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.route.paramMap.subscribe(() => {
+      this.listProducts();
+    })
+  }
+
+  listProducts(){
+    this.searchMode = this.route.snapshot.paramMap.has("keyword");
+    if(this.searchMode){
+      this.handleSearchProducts();
+    }else{
+      this.handleListProducts();
+    }
+  }
+
+  handleListProducts() {
+    // check if "id" param is available
+    const hasCategoryId: boolean = this.route.snapshot.paramMap.has("id");
+    if (hasCategoryId) {
+      this.currentCategoryId = +this.route.snapshot.paramMap.get("id")!;
+    } else {
+      this.currentCategoryId = 1;
+    }
+    this.productService.getProductsByCategoryId(this.currentCategoryId).subscribe(res => {
+      this.products = res.data;
+    })
+  }
+
+  handleSearchProducts(){
+    const theKeyword:string = this.route.snapshot.paramMap.get("keyword")!;
+    this.productService.searchProducts(theKeyword).subscribe(res => {
+      this.products = res.data;
+    })
+  }
+}
+
+
+========================================
+Step - 7 : Shopping Cart
+========================================
+
+@@@@ (1) Create CartItem class 
+
+export class CartItem {
+
+    id: number;
+    name: string;
+    imageUrl: string;
+    unitPrice: number;
+    quantity: number;
+
+    constructor(product: Product) {
+        this.id = product.id;
+        this.name = product.name;
+        this.imageUrl = product.imageUrl;
+        this.unitPrice = product.unitPrice;
+        this.quantity = 1;
+    }
+}
+
+@@@@ (2) Create CartStatus component
+
+$ ng g c cart-status
+
+@@@@ (3) Remove hard coded cart details and invoke cart-status component from app.component.html 
+
+<!-- HEADER DESKTOP-->
+<header class="header-desktop">
+<div class="section-content section-content-p30">
+  <div class="container-fluid">
+    <div class="header-wrap">
+      <app-search></app-search>
+      <app-cart-status></app-cart-status>
+    </div>
+    <div class="account-wrap"></div>
+  </div>
+</div>
+</header>
+<!-- END HEADER DESKTOP-->
+
+@@@@ (4) Create CartService to handle cart related business logic
+
+$ ng generate service services/cart
+
+export class CartService {
+
+  totalPrice: Subject<number> = new Subject<number>();
+  totalQuanity: Subject<number> = new Subject<number>();
+
+  cartItems: CartItem[] = [];
+
+  constructor() { }
+
+  addToCart(theCartItem: CartItem) {
+
+    let alereadyExistsInCart: boolean = false;
+    let existingCartItem!: CartItem;
+
+    if (this.cartItems.length > 0) {
+      // check item presence is cart based on item id
+      for (let tempCartItem of this.cartItems) {
+        if (tempCartItem.id === theCartItem.id) {
+          existingCartItem = tempCartItem;
+          alereadyExistsInCart = true;
+          break;
+        }
+      }
+    }
+
+    if (alereadyExistsInCart) {
+      existingCartItem.quantity++;
+    } else {
+      this.cartItems.push(theCartItem);
+    }
+
+    //compute cart values
+
+    this.computeCartTotals();
+
+  }
+
+  computeCartTotals() {
+
+    let totalPriceValue: number = 0;
+    let totalQuantityValue: number = 0;
+
+    for (let currentCartItem of this.cartItems) {
+      totalPriceValue += currentCartItem.quantity * currentCartItem.unitPrice;
+      totalQuantityValue += currentCartItem.quantity;
+    }
+
+    // publish new values for all subscribers
+
+    this.totalPrice.next(totalPriceValue);
+    this.totalQuanity.next(totalQuantityValue);
+
+  }
+}
+
+@@@@ (5) add a function to handle 'Add To Cart' button in product-list-component
+
+// change in ts file
+
+ addToCart(theProduct: Product) {
+
+    console.log(`Adding to cart: ${theProduct.name}, ${theProduct.unitPrice}`);
+
+    const theCartItem = new CartItem(theProduct);
+    
+    this.cartService.addToCart(theCartItem);
+
+  }
+
+// change in template
+<a class="primary-btn" (click)="addToCart(tempProduct)">Add to cart</a>  
+
+
+@@@@ (6) Make changes in cart-status-component to display latest cart values (price & quantity)
+
+// component ts file change
+
+export class CartStatusComponent implements OnInit {
+
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private cartService: CartService) { }
+
+  ngOnInit(): void {
+    this.updateCartStatus();
+  }
+
+  updateCartStatus() {
+    this.cartService.totalPrice.subscribe(
+      data => this.totalPrice = data
+    );
+    this.cartService.totalQuanity.subscribe(
+      data => this.totalQuantity = data
+    );
+  }
+}
+
+// template change
+
+<div class="cart-area d-n">
+
+    <div class="total">{{ totalPrice }}
+        <span>{{ totalQuantity }}</span>
+    </div>
+    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+
+</div>
+
+
+================================
+Step - 7 : Cart Details Page
+================================
+
+@@@@ (1) Create cart-details component 
+
+    $ ng g c components/cart-details
+
+@@@@ (2) Configure routing 
+
+{path: 'cart-details', component:CartDetailsComponent},    
+
+@@@@ (3) Change cart-status template to invoke cart-details page
+
+<div class="cart-area d-n">
+    <a routerLink="/cart-details">
+        <div class="total">{{ totalPrice }}
+            <span>{{ totalQuantity }}</span>
+        </div>
+        <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+    </a>
+</div>
+
+@@@@ (3) Write logic in cart-details component to access cart-items
+
+// ts file changes
+
+export class CartDetailsComponent implements OnInit{
+
+  cartItems: CartItem[] = [];
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  ngOnInit(): void {
+    this.listCartDetails();
+  }
+
+  constructor(private cartService: CartService) { }
+
+    listCartDetails(){
+
+      this.cartItems = this.cartService.cartItems;
+
+      // subscribe cart price
+      this.cartService.totalPrice.subscribe(
+        data => this.totalPrice = data
+      );
+
+      // subscribe total-quantity
+      this.cartService.totalQuanity.subscribe(
+        data=> this.totalQuantity = data
+      );
+
+      this.cartService.computeCartTotals();
+    }
+}
+
+@@@@ (4) Write presentation logic to display cart-details
+
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+
+            <table class="table table-bordered">
+                <tr>
+                    <th width="20%">Product Image</th>
+                    <th width="50%">Product Detail</th>
+                    <th width="30%"></th>
+                </tr>
+
+                <tr *ngFor="let tempCartItem of cartItems">
+                    <td>
+                        <img src="{{ tempCartItem.imageUrl }}" class="img-responsive" width="150px" />
+                    </td>
+                    <td>
+                        <p>{{ tempCartItem.name }}</p>
+                        <p>{{ tempCartItem.unitPrice }}</p>
+                    </td>
+                    <td>
+                        <div class="items">
+                            <label>Quantity:</label> {{ tempCartItem.quantity }}
+                        </div>
+
+                        <p class="mt-2">Subtotal: {{ tempCartItem.quantity * tempCartItem.unitPrice }}</p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2"></td>
+                    <td style="font-weight: bold">
+                        <p>Total Quantity: {{ totalQuantity }}</p>
+                        <p>Shipping: FREE</p>
+                        <p>Total Price: {{ totalPrice }}</p>
+                    </td>
+                </tr>
+
+            </table>
+            
+            <!-- if cart is empty then display a message -->
+            <div *ngIf="cartItems.length == 0" class="alert alert-warning col-md-12" role="alert">
+                Your shopping cart is empty. 
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@@@@ (5) Add functionality to increment & Decrement item quantity in cart-service
+
+ decrementQuantity(theCartItem: CartItem) {
+    theCartItem.quantity--;
+    if (theCartItem.quantity == 0) {
+      this.remove(theCartItem);
+    } else {
+      this.computeCartTotals();
+    }
+  }
+  
+  remove(theCartItem: CartItem) {
+    // get index of item in the array
+    const itemIndex = this.cartItems.findIndex(tempCartItem => tempCartItem.id === theCartItem.id);
+    if(itemIndex > -1){
+      this.cartItems.splice(itemIndex, 1);
+      this.computeCartTotals();
+    }
+  }
+
+@@@@ (6) Write functions in cart-details component to handle increment, decrement and remove buttions
+
+ incrementQuantity(theCartItem: CartItem) {
+    this.cartService.addToCart(theCartItem);
+  }
+
+  decrementQuantity(theCartItem:CartItem){
+    this.cartService.decrementQuantity(theCartItem);
+  }
+
+  removeItem(theCartItem: CartItem){
+    this.cartService.remove(theCartItem);
+  }
+
+7) Make changes in cart-details template page to display +, - and remove options  
+
+<div class="main-content">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+
+            <table class="table table-bordered">
+                <tr>
+                    <th width="20%">Product Image</th>
+                    <th width="50%">Product Detail</th>
+                    <th width="30%"></th>
+                </tr>
+
+                <tr *ngFor="let tempCartItem of cartItems">
+                    <td>
+                        <img src="{{ tempCartItem.imageUrl }}" class="img-responsive" width="150px" />
+                    </td>
+                    <td>
+                        <p>{{ tempCartItem.name }}</p>
+                        <p>{{ tempCartItem.unitPrice }}</p>
+                    </td>
+                    <td>
+                        <div class="items">
+                            <label>Quantity:</label>
+
+                            <div class="row no-gutters">
+                                <div class="col">
+                                    <button (click)="incrementQuantity(tempCartItem)" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus">+</i>
+                                    </button>
+                                </div>
+
+                                <div class="col ml-4 mr-2">
+                                    {{ tempCartItem.quantity }}
+                                </div>
+
+                                <div class="col">
+                                    <button (click)="decrementQuantity(tempCartItem)" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-minus">-</i>
+                                    </button>
+                                </div>
+
+                                <div class="col">
+                                    <button (click)="removeItem(tempCartItem)" class="btn btn-danger">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <p class="mt-2">Subtotal: {{ tempCartItem.quantity * tempCartItem.unitPrice | currency: 'USD' }}
+                        </p>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="1"></td>
+                    <td style="font-weight: bold">
+                        <div class="row">
+                            <div class="col">
+                                Cart Summary
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight: bold">
+                        <div class="row">
+                            <div class="col">
+                                <p>Total Quantity: {{ totalQuantity }}</p>
+
+                                <p>Total Price: {{ totalPrice | currency: 'USD'}}</p>
+                                <div *ngIf="cartItems.length != 0">
+                                    <a routerLink="/checkout" class="btn btn-primary">Proceeed To Checkout</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <!-- if cart is empty then display a message -->
+            <div *ngIf="cartItems.length == 0" class="alert alert-warning col-md-12" role="alert">
+                Your shopping cart is empty.
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+================================
+Step - 8 : Checkout Page
+================================
+
+@@@@ (1) Generate checkout component 
+
+$ ng generate component components/checkout
+
+@@@@ (2) Configure router for checkout component 
+
+{path: 'checkout', component:CheckoutComponent},
+
+@@@@ (3) Import RouterModule in cart-details component
+
+Note: Make sure checkout button having router link to load checkout component.
+
+@@@@ (4) Configure Form Group in checkout component ts file to load form fields
+
+export class CheckoutComponent implements OnInit {
+
+  checkoutFormGroup!: FormGroup;
+
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private formBuilder: FormBuilder) { }
+
+  ngOnInit(): void {
+
+    this.checkoutFormGroup = this.formBuilder.group({
+      
+      customer: this.formBuilder.group({
+        name: [''],
+        email: [''],
+        phno: ['']
+      }),
+
+      shippingAddress: this.formBuilder.group({
+        street: [''],
+        city: [''],
+        state: [''],
+        hno: [''],
+        zipCode: ['']
+      }),
+    })   
+
+  }
+
+  onSubmit(){
+    console.log(this.checkoutFormGroup.get('customer')!.value);
+    console.log(this.checkoutFormGroup.get('shippingAddress')!.value);
+  }
+
+}
+
+5) Presentation logic to display form in checkout template page
+
+<div class="main-content page-m">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+
+            <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+
+                <!-- customer form group -->
+                <div formGroupName="customer" class="form-area">
+                    <h3>Customer</h3>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Name</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="firstName" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Email</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="email" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Phno</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="phno" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- shipping Address -->
+                <div formGroupName="shippingAddress" class="form-area">
+                    <h3>Shipping Address</h3>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>House Number</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="hno" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Street</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="street" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>City</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="city" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>State</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="state" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Zip Code</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="zipCode" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Order details -->
+                <div class="form-area">
+                    <h3>Review Your Order</h3>
+
+                    <p>Total Quantity: {{ totalQuantity }}</p>
+                    <p>Shipping: FREE</p>
+                    <p>Total Price: {{ totalPrice }}</p>
+                </div>
+
+                <!-- submit button-->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-info">Purchase</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+==============================================
+Step - 9 : Sending Order details to backend
+==============================================
+
+1) Create binding classes
+
+ng generate class dto/customer
+ng generate class dto/address
+ng generate class dto/order
+ng generate class dto/orderitems
+ng generate class dto/purchaseorder
+
+export class Customer {
+
+    constructor(public name: string,
+        public email: string,
+        public phno: string) { }
+
+}
+
+export class Address {
+
+    constructor(public street: string,
+        public city: string,
+        public state: string,
+        public houseNum: string,
+        public zipCode: string) { }
+}
+
+export class Order {
+
+    constructor (public totalQuantity: number,
+        public totalPrice: number) { }
+}
+
+export class Orderitems {
+
+    constructor(public imageUrl: string,
+        public unitPrice: number,
+        public quantity: number,
+        public id: number) { }
+
+}
+
+export class Purchaseorder {
+
+    customer!: Customer;
+
+    address!: Address;
+
+    order!: Order;
+
+    orderItems!: Orderitems[]
+}
+
+2) Create checkout service to handle order business logic
+
+export class CheckoutService {
+
+  constructor(private httpClient: HttpClient) { }
+
+  placeOrder(purchase: Purchaseorder): Observable<any> {
+    return this.httpClient.post<Purchaseorder>(AppConstants.ORDER_ENDPOINT, purchase);
+  }
+
+}
+
+3) Make changes in checkout component ts file to send order details to backend
+
+export class CheckoutComponent implements OnInit {
+
+  checkoutFormGroup!: FormGroup;
+
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private formBuilder: FormBuilder,
+    private cartService: CartService,
+    private checkoutService: CheckoutService
+  ) { }
+
+  ngOnInit(): void {
+
+    this.reviewCartDetails()
+
+    this.checkoutFormGroup = this.formBuilder.group({
+      customer: this.formBuilder.group({
+        name: [''],
+        email: [''],
+        phoneNo: ['']
+      }),
+
+      address: this.formBuilder.group({
+        street: [''],
+        city: [''],
+        state: [''],
+        houseNum: [''],
+        zipCode: ['']
+      }),
+    })
+
+  }
+
+  get getName() { return this.checkoutFormGroup.get('customer.name'); }
+  get email() { return this.checkoutFormGroup.get('customer.email'); }
+  get phno() { return this.checkoutFormGroup.get('customer.phno'); }
+
+  get addressStreet() { return this.checkoutFormGroup.get('address.street'); }
+  get addressCity() { return this.checkoutFormGroup.get('address.city'); }
+  get adressState() { return this.checkoutFormGroup.get('address.state'); }
+  get addressZipCode() { return this.checkoutFormGroup.get('address.zipCode'); }
+  get addressHouseNum() { return this.checkoutFormGroup.get('address.houseNum'); }
+
+  onSubmit() {
+
+    // setup order
+    let order = new Order(this.totalQuantity, this.totalPrice);
+
+    // setup order items
+    const cartItems = this.cartService.cartItems;
+    let orderItems: Orderitems[] = cartItems.map(tempCartItem => new Orderitems(tempCartItem.imageUrl!, tempCartItem.unitPrice!, tempCartItem.quantity, tempCartItem.id!));
+
+    // setup purchase  order
+    let purchase = new Purchaseorder();
+
+    // set customer data to purchase order
+    purchase.customer = this.checkoutFormGroup.controls['customer'].value;
+
+    // set address data to purchase order
+    purchase.shippingAddress = this.checkoutFormGroup.controls['address'].value;
+
+    // set order
+    purchase.order = order;
+
+    // set order items 
+    purchase.orderItems = orderItems;
+
+    // make backend api call
+
+    this.checkoutService.placeOrder(purchase).subscribe(response => {
+      const responseData = response.data;
+      console.log(responseData);
+      // Payment Gateway configuration
+    })
+
+  }
+
+  reviewCartDetails() {
+
+    this.cartService.totalPrice.subscribe(
+      data => this.totalPrice = data
+    );
+    this.cartService.totalQuantity.subscribe(
+      data => this.totalQuantity = data
+    );
+  }
+}
+
+4) Make changes in template to display checkout form
+
+<div class="main-content page-m">
+    <div class="section-content section-content-p30">
+        <div class="container-fluid">
+
+            <form [formGroup]="checkoutFormGroup" (ngSubmit)="onSubmit()">
+
+                <!-- customer form group -->
+                <div formGroupName="customer" class="form-area">
+                    <h3>Customer</h3>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Name</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="name" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Email</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="email" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Phno</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="phoneNo" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- shipping Address -->
+                <div formGroupName="address" class="form-area">
+                    <h3>Shipping Address</h3>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>House Number</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="houseNum" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Street</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="street" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>City</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="city" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>State</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="state" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2"> <label>Zip Code</label></div>
+                        <div class="col-md-9">
+                            <div class="input-space">
+                                <input formControlName="zipCode" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Order details -->
+                <div class="form-area">
+                    <h3>Review Your Order</h3>
+
+                    <p>Total Quantity: {{ totalQuantity }}</p>
+                    <p>Shipping: FREE</p>
+                    <p>Total Price: {{ totalPrice }}</p>
+
+                </div>
+
+                <!-- submit button-->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-info">Purchase</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+==============================================
+Step - 9 : Payment Gateway Integration
+==============================================
+
+1) Configure razorpay java script file in index.html
+
+<body>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <app-root></app-root>
+</body>
+
+2) create a file under src (filename: razorpay.d.ts) to declare razorpay object 
+
+declare var Razorpay: any;
+
+3) Create payment service to handle razorypay gateway
+
+export class PaymentService {
+
+  private RAZORPAY_KEY = 'rzp_test_sIueffgdgb15KX'; // Replace with your Razorpay key
+
+  constructor() { }
+
+  processPayment(orderId: string, amount: number, successCallback: (response: any) => void): void {
+
+    const options: any = {
+      key: this.RAZORPAY_KEY,
+      amount: amount * 100,
+      currency: 'INR',
+      name: 'Ashok IT',
+      description: 'Ecommerce order',
+      order_id: orderId,
+      handler: successCallback,
+      prefill: {
+        name: 'Ashok IT',
+        email: 'info@ashokit.in',
+        contact: '9797979'
+      },
+      notes: {
+        addres: 'Customer Address'
+
+      },
+      theme: {
+        "color": "#3399cc"
+      }
+    };
+
+    const rzp1 = new Razorpay(options);
+    rzp1.open();
+
+  }
+
+}
+
+4) After Creating order in backend, open payment gateway page using payment service method
+
+// changes in checkout component ts file 
+
+export class CheckoutComponent implements OnInit {
+
+  checkoutFormGroup!: FormGroup;
+
+  totalPrice: number = 0;
+  totalQuantity: number = 0;
+
+  constructor(private formBuilder: FormBuilder,
+    private cartService: CartService,
+    private checkoutService: CheckoutService,
+    private paymetService: PaymentService
+  ) { }
+
+  ngOnInit(): void {
+
+    this.reviewCartDetails()
+
+    this.checkoutFormGroup = this.formBuilder.group({
+      customer: this.formBuilder.group({
+        name: [''],
+        email: [''],
+        phoneNo: ['']
+      }),
+
+      address: this.formBuilder.group({
+        street: [''],
+        city: [''],
+        state: [''],
+        houseNum: [''],
+        zipCode: ['']
+      }),
+    })
+
+  }
+
+  get getName() { return this.checkoutFormGroup.get('customer.name'); }
+  get email() { return this.checkoutFormGroup.get('customer.email'); }
+  get phno() { return this.checkoutFormGroup.get('customer.phoneNo'); }
+
+  get addressStreet() { return this.checkoutFormGroup.get('address.street'); }
+  get addressCity() { return this.checkoutFormGroup.get('address.city'); }
+  get adressState() { return this.checkoutFormGroup.get('address.state'); }
+  get addressZipCode() { return this.checkoutFormGroup.get('address.zipCode'); }
+  get addressHouseNum() { return this.checkoutFormGroup.get('address.houseNum'); }
+
+  onSubmit() {
+
+    // setup order
+    let order = new Order(this.totalQuantity, this.totalPrice);
+
+    // setup order items
+    const cartItems = this.cartService.cartItems;
+    let orderItems: Orderitems[] = cartItems.map(tempCartItem => new Orderitems(tempCartItem.imageUrl!, tempCartItem.unitPrice!, tempCartItem.quantity, tempCartItem.id!));
+
+    // setup purchase  order
+    let purchase = new Purchaseorder();
+
+    // set customer data to purchase order
+    purchase.customer = this.checkoutFormGroup.controls['customer'].value;
+
+    // set address data to purchase order
+    purchase.address = this.checkoutFormGroup.controls['address'].value;
+
+    // set order
+    purchase.order = order;
+
+    // set order items 
+    purchase.orderItems = orderItems;
+
+    // make backend api call
+
+    this.checkoutService.placeOrder(purchase).subscribe(response => {
+      const responseData = response.data;
+      console.log(responseData);      
+      this.paymetService.processPayment(response.razorpayOrderId, this.totalPrice, this.onPaymentSuccess.bind(this));
+    })
+  }
+
+  onPaymentSuccess(response: any){
+    console.log("payment success");
+    alert("payment-success");
+  }
+
+  reviewCartDetails() {
+
+    this.cartService.totalPrice.subscribe(
+      data => this.totalPrice = data
+    );
+    this.cartService.totalQuantity.subscribe(
+      data => this.totalQuantity = data
+    );
+
+  }
+
+}

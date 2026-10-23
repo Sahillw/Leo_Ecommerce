@@ -1,0 +1,44 @@
+<div
+  style="
+    display: flex;
+    align-items: center;
+    width: 480px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 25px;
+    overflow: hidden;
+  "
+>
+  <input
+    #myInput
+    type="text"
+    placeholder="Search products, brands, categories..."
+    (keyup.enter)="doSearch(myInput.value)"
+    style="
+      border: none;
+      padding: 12px 22px;
+      width: 100%;
+      outline: none;
+      font-size: 15px;
+      color: #1e293b;
+      background-color: #ffffff;
+    "
+  />
+
+  <button
+    type="button"
+    (click)="doSearch(myInput.value)"
+    style="
+      background-color: #0284c7;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      white-space: nowrap;
+      transition: background 0.2s ease;
+    "
+  >
+    Search
+  </button>
+</div>

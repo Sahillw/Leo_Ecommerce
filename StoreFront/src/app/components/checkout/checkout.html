@@ -1,0 +1,344 @@
+<div class="main-content page-m" style="padding: 20px 0">
+  <div class="section-content section-content-p30">
+    <div class="container-fluid" style="max-width: 900px; margin: 0 auto">
+      <form
+        [formGroup]="checkoutFormGroup"
+        (ngSubmit)="onSubmit()"
+        style="
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 12px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+        "
+      >
+        <!-- Customer Form Group -->
+        <div
+          formGroupName="customer"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Customer Details
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Name</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="name"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Email</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="email"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Phone No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="phno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address Form Group -->
+        <div
+          formGroupName="shippingAddress"
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 25px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 20px;
+              font-weight: 700;
+              margin-bottom: 20px;
+            "
+          >
+            Shipping Address
+          </h3>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>House No</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="hno"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Street</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="street"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>City</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="city"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>State</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="state"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="row"
+            style="margin-bottom: 15px; display: flex; align-items: center"
+          >
+            <div
+              class="col-md-2"
+              style="width: 20%; font-weight: 600; color: #475569"
+            >
+              <label>Zip Code</label>
+            </div>
+            <div class="col-md-9" style="width: 80%">
+              <div class="input-space">
+                <input
+                  formControlName="zipCode"
+                  type="text"
+                  style="
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #cbd5e1;
+                    border-radius: 8px;
+                    font-size: 15px;
+                    outline: none;
+                  "
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Details Review -->
+        <div
+          class="form-area"
+          style="
+            margin-bottom: 30px;
+            background-color: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+          "
+        >
+          <h3
+            style="
+              color: #0f172a;
+              font-size: 18px;
+              font-weight: 700;
+              margin-bottom: 12px;
+            "
+          >
+            Review Your Order
+          </h3>
+          <p style="margin: 6px 0; font-size: 15px; color: #334155">
+            Total Quantity: <strong>{{ totalQuantity }}</strong>
+          </p>
+          <p style="margin: 6px 0; font-size: 15px; color: #16a34a">
+            Shipping: <strong>FREE</strong>
+          </p>
+          <p
+            style="
+              margin: 6px 0;
+              font-size: 18px;
+              font-weight: 700;
+              color: #0284c7;
+            "
+          >
+            Total Price: {{ totalPrice | currency: "USD" }}
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center" style="text-align: center">
+          <button
+            type="submit"
+            class="btn btn-info"
+            style="
+              background-color: #0f172a;
+              color: #ffffff;
+              border: none;
+              padding: 12px 35px;
+              border-radius: 8px;
+              font-weight: 600;
+              font-size: 16px;
+              cursor: pointer;
+              transition: background 0.2s ease;
+            "
+          >
+            Purchase
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,985 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.7</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>in.ashokit</groupId>
+	<artifactId>103-Order-Api</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>103-Order-Api</name>
+	<description>Demo project for Spring Boot</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>17</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>com.razorpay</groupId>
+			<artifactId>razorpay-java</artifactId>
+			<version>1.3.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+wrapperVersion=3.3.4
+distributionType=only-script
+distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-maven/3.9.11/apache-maven-3.9.11-bin.zip
+package in.ashokit;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+spring.application.name=103-Order-Api
+
+spring.main.allow-circular-references=true
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/Comm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=Leo@12345
+server.port=8081
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+#SMTP Properties
+ spring.mail.host=smtp.gmail.com
+ spring.mail.port=587
+ spring.mail.username=sahill.warhade@gmail.com
+ spring.mail.password=lyixrklledxjjsrw
+ spring.mail.properties.mail.smtp.auth=true
+ spring.mail.properties.mail.smtp.starttls.enable=true
+ spring.mail.properties.mail.smtp.starttls.required=true
+
+razorpay.key.id=rzp_test_TrHevKGvKrxk05
+razorpay.key.secret=h5KkLZ6JKDwv07UuSpFWPlyK
+package in.ashokit.dto;
+
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class UpdateOrderRequestDto {
+    private Integer orderId;
+    private String orderTrackingNum;
+    private String orderStatus;
+    private String paymentStatus;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+}
+package in.ashokit.dto;
+
+import lombok.Data;
+
+import java.util.List;
+
+@Data
+public class PurchaseOrderRequestDto {
+    private CustomerDto customerDto;
+    private AddressDto addressDto;
+    private OrderDto orderDto;
+    private List<OrderItemDto> orderItemDtoList;
+}
+package in.ashokit.dto;
+
+import jakarta.persistence.Column;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+
+
+@Data
+public class CustomerDto {
+
+    private Integer customerId;
+    private String name;
+    private String email;
+    private String phoneNo;
+
+}
+package in.ashokit.dto;
+
+import lombok.Data;
+
+@Data
+public class OrderItemDto {
+
+    private Integer itemId;
+    private String imageUrl;
+    private Integer quantity;
+    private Double unitPrice;
+    private String productName;
+}
+package in.ashokit.dto;
+
+import lombok.Data;
+
+import java.time.LocalDate;
+
+@Data
+public class OrderDto {
+
+    private Integer orderId;
+    private String orderTrackingNum;
+    private Double totalPrice;
+    private Integer totalQuantity;
+    private String orderStatus;
+    private LocalDate deliveyDate;
+    private String paymentStatus;
+    private String razorpayOrderId;
+    private String razorpayPaymentId;
+    private LocalDate dateCreated;
+    private LocalDate lastUpdated;
+    private String customerEmail;
+}
+package in.ashokit.dto;
+
+import lombok.Data;
+
+@Data
+public class AddressDto {
+
+    private Integer addrId;
+    private String hno;
+    private String street;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String addrType;
+
+}
+package in.ashokit.dto;
+
+import lombok.Data;
+
+@Data
+public class PurchaseOrderResponseDto {
+
+    private String razorpayOrderId;
+    private String orderStatus;
+    private String orderTrackingNumber;
+    private String paymentStatus;
+}
+package in.ashokit;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class Application {
+
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+}
+package in.ashokit.response;
+
+import lombok.Data;
+
+@Data
+public class ApiResponse<T> {
+
+    private Integer status;
+    private String msg;
+    private T data;
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "product")
+@Setter
+@Getter
+public class ProductEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long productId;
+    private String name;
+    private String description;
+    private String title;
+    private BigDecimal unitPrice;
+    private String imageUrl;
+    private boolean active;
+    private int unitsInStock;
+
+    @CreationTimestamp
+    private LocalDate dateCreated;
+
+    @UpdateTimestamp
+    private LocalDate lastUpdated;
+
+    @ManyToOne
+    @JoinColumn(name="category_id", nullable = false)
+    private ProductCategoryEntity category;
+
+
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name = "shipping_addr")
+@Setter
+@Getter
+public class ShippingAddressEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer addrId;
+    private String hno;
+    private String street;
+    private String city;
+    private String state;
+    private String zipCode;
+    private String addrType;
+    private String deleteSw;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name="order_items")
+@Setter
+@Getter
+public class OrderItemEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer itemId;
+    private String imageUrl;
+    private Integer quantity;
+    private Double unitPrice;
+    private String productName;
+
+    @ManyToOne
+    @JoinColumn(name="order_id")
+    private OrderEntity order;
+
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+@Entity
+@Table(name="product_category")
+@Setter
+@Getter
+public class ProductCategoryEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long categoryId;
+
+    private String categoryName;
+
+    private String active;
+
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "customer")
+@Setter
+@Getter
+public class CustomerEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer customerId;
+    private String name;
+    private String email;
+    private String password;
+    private String pwdUpdated;
+    private String phoneNo;
+    @CreationTimestamp
+    @Column(name="date_created", updatable = false)
+    private LocalDate dateCreated;
+
+    @UpdateTimestamp
+    @Column(name="last_updated", insertable = false)
+    private LocalDate lastUpdated;
+
+}
+package in.ashokit.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "orders")
+@Setter
+@Getter
+public class OrderEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer orderId;
+
+    private String orderTrackingNum;
+
+    private Double totalPrice;
+
+    private Integer totalQuantity;
+
+    private String orderStatus;
+
+    private LocalDate deliveyDate;
+
+    private String paymentStatus;
+
+    private String razorpayOrderId;
+
+    private String razorpayPaymentId;
+
+    @CreationTimestamp
+    @Column(name = "date_created", updatable = false)
+    private LocalDate dateCreated;
+
+    @UpdateTimestamp
+    @Column(name = "date_updated", insertable = false)
+    private LocalDate lastUpdated;
+
+    private String customerEmail;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private CustomerEntity customer;
+
+    @ManyToOne
+    @JoinColumn(name = "addr_id")
+    private ShippingAddressEntity shippingAddress;
+
+
+}
+package in.ashokit.mapper;
+
+import in.ashokit.dto.OrderDto;
+import in.ashokit.entity.OrderEntity;
+import org.modelmapper.ModelMapper;
+
+public class OrderMapper {
+
+    private static ModelMapper mapper = new ModelMapper();
+
+    public static OrderDto convertToDto(OrderEntity orderEntity) {
+        return mapper.map(orderEntity, OrderDto.class);
+    }
+
+    public static OrderEntity convertToEntity(OrderDto orderDto) {
+        return mapper.map(orderDto, OrderEntity.class);
+    }
+}
+package in.ashokit.mapper;
+
+import in.ashokit.dto.CustomerDto;
+import in.ashokit.entity.CustomerEntity;
+import org.modelmapper.ModelMapper;
+
+public class CustomerMapper {
+
+    private static ModelMapper mapper = new ModelMapper();
+
+    public static CustomerDto convertToDto(CustomerEntity customerEntity) {
+        return mapper.map(customerEntity, CustomerDto.class);
+    }
+
+    public static CustomerEntity convertToEntity(CustomerDto customerDto) {
+        return mapper.map(customerDto, CustomerEntity.class);
+    }
+}
+package in.ashokit.mapper;
+
+import in.ashokit.dto.AddressDto;
+import in.ashokit.entity.ShippingAddressEntity;
+import org.modelmapper.ModelMapper;
+
+public class AddressMapper {
+
+    private static ModelMapper mapper = new ModelMapper();
+
+    public static AddressDto convertToDto(ShippingAddressEntity addrEntity) {
+        return mapper.map(addrEntity, AddressDto.class);
+    }
+
+    public static ShippingAddressEntity toEntity(AddressDto addrDto) {
+        return mapper.map(addrDto, ShippingAddressEntity.class);
+    }
+}
+package in.ashokit.mapper;
+
+import in.ashokit.dto.OrderItemDto;
+import in.ashokit.entity.OrderItemEntity;
+import org.modelmapper.ModelMapper;
+
+public class OrderItemMapper {
+
+    private static ModelMapper mapper = new ModelMapper();
+
+    public static OrderItemDto convertToDto(OrderItemEntity orderItemEntity) {
+        return mapper.map(orderItemEntity, OrderItemDto.class);
+    }
+
+    public static OrderItemEntity convertToEntity(OrderItemDto orderItemDto) {
+        return mapper.map(orderItemDto, OrderItemEntity.class);
+    }
+}
+package in.ashokit.service;
+
+import in.ashokit.dto.*;
+import in.ashokit.entity.CustomerEntity;
+import in.ashokit.entity.OrderEntity;
+import in.ashokit.entity.OrderItemEntity;
+import in.ashokit.entity.ShippingAddressEntity;
+import in.ashokit.mapper.AddressMapper;
+import in.ashokit.mapper.CustomerMapper;
+import in.ashokit.mapper.OrderItemMapper;
+import in.ashokit.mapper.OrderMapper;
+import in.ashokit.repo.CustomerRepo;
+import in.ashokit.repo.OrderItemRepo;
+import in.ashokit.repo.OrderRepo;
+import in.ashokit.repo.ShippingAddressRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class OrderServiceImpl implements OrderService {
+
+    @Autowired
+    private OrderRepo orderRepo;
+
+    @Autowired
+    private OrderItemRepo itemRepo;
+
+    @Autowired
+    private CustomerRepo customerRepo;
+
+    @Autowired
+    private ShippingAddressRepo addressRepo;
+
+    @Autowired
+    private RazorpayService razorpayService;
+
+    @Override
+    public PurchaseOrderResponseDto createOrder(PurchaseOrderRequestDto orderRequestDto) throws Exception {
+
+        CustomerDto customerDto = orderRequestDto.getCustomerDto();
+        AddressDto addressDto = orderRequestDto.getAddressDto();
+        OrderDto orderDto = orderRequestDto.getOrderDto();
+        List<OrderItemDto> orderItemDtoList = orderRequestDto.getOrderItemDtoList();
+
+        // Saving Customer
+        CustomerEntity customerEntity = customerRepo.findByEmail(customerDto.getEmail());
+        if (customerEntity == null) {
+            customerEntity = CustomerMapper.convertToEntity(customerDto);
+            customerRepo.save(customerEntity);
+        }
+
+        // Saving Address
+        ShippingAddressEntity addressEntity = null;
+        if (addressDto.getAddrId() == null) {
+            addressEntity = AddressMapper.toEntity(addressDto);
+            addressEntity.setCustomer(customerEntity);
+            addressRepo.save(addressEntity);
+        } else {
+            addressEntity = addressRepo.findById(addressDto.getAddrId()).get();
+        }
+
+        // Saving ORDER
+        String orderTrackingNum = generateRandomTrackingNumber();
+        orderDto.setOrderTrackingNum(orderTrackingNum);
+
+        String razorpayOrderId = razorpayService.createRazorpayOrder(orderDto.getTotalPrice());
+        orderDto.setRazorpayOrderId(razorpayOrderId);
+        orderDto.setOrderStatus("CREATED");
+        orderDto.setPaymentStatus("PENDING");
+
+        OrderEntity orderEntity = OrderMapper.convertToEntity(orderDto);
+        orderEntity.setCustomer(customerEntity);
+        orderEntity.setShippingAddress(addressEntity);
+        orderEntity.setCustomerEmail(customerEntity.getEmail());
+
+        orderEntity = orderRepo.save(orderEntity);
+
+        // SAVE ORDER ITEMS
+        for (OrderItemDto itemDto : orderItemDtoList) {
+            OrderItemEntity orderItemEntity = OrderItemMapper.convertToEntity(itemDto);
+            orderItemEntity.setOrder(orderEntity);
+            itemRepo.save(orderItemEntity);
+        }
+
+        // Prepare final response
+        PurchaseOrderResponseDto responseDto = new PurchaseOrderResponseDto();
+        responseDto.setRazorpayOrderId(razorpayOrderId);
+        responseDto.setOrderTrackingNumber(orderTrackingNum);
+        responseDto.setOrderStatus("CREATED");
+        responseDto.setPaymentStatus("PENDING");
+
+        return responseDto;
+    }
+
+    @Override
+    public PurchaseOrderResponseDto updateOrder(UpdateOrderRequestDto updateOrderRequestDto) {
+
+        OrderEntity orderEntity = null;
+
+        // 1. Search by tracking number
+        if (updateOrderRequestDto.getOrderTrackingNum() != null) {
+            orderEntity = orderRepo.findByOrderTrackingNum(updateOrderRequestDto.getOrderTrackingNum());
+        }
+
+        // 2. Fallback search by razorpayOrderId
+        if (orderEntity == null && updateOrderRequestDto.getRazorpayOrderId() != null) {
+            orderEntity = orderRepo.findAll().stream()
+                    .filter(order -> updateOrderRequestDto.getRazorpayOrderId().equals(order.getRazorpayOrderId()))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (orderEntity != null) {
+            orderEntity.setRazorpayPaymentId(updateOrderRequestDto.getRazorpayPaymentId());
+            orderEntity.setPaymentStatus("COMPLETED");
+            orderEntity.setOrderStatus("CONFIRMED");
+            orderRepo.save(orderEntity);
+
+            // Trigger Notification API call
+            triggerOrderConfirmationEmail(orderEntity.getOrderId());
+
+            // Prepare final response
+            PurchaseOrderResponseDto responseDto = new PurchaseOrderResponseDto();
+            responseDto.setRazorpayOrderId(orderEntity.getRazorpayOrderId());
+            responseDto.setOrderTrackingNumber(orderEntity.getOrderTrackingNum());
+            responseDto.setOrderStatus(orderEntity.getOrderStatus());
+            responseDto.setPaymentStatus("COMPLETED");
+
+            return responseDto;
+        }
+
+        return null;
+    }
+
+    private void triggerOrderConfirmationEmail(Integer orderId) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            // Assuming 04-notifications-api is running on port 8082
+            String notificationUrl = "http://localhost:8082/api/notifications/orders/" + orderId + "/confirmation";
+            restTemplate.postForEntity(notificationUrl, null, String.class);
+            System.out.println("Notification trigger sent successfully for order ID: " + orderId);
+        } catch (Exception ex) {
+            System.err.println("Failed to trigger notification service: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public PurchaseOrderResponseDto cancelOrder(String orderTrackingNumber) throws Exception {
+
+        OrderEntity orderEntity = orderRepo.findByOrderTrackingNum(orderTrackingNumber);
+        orderEntity.setOrderStatus("CANCELLED");
+        orderEntity.setPaymentStatus("REFUND-IN-PROGRESS");
+        orderEntity.setDeliveyDate(null);
+        orderRepo.save(orderEntity);
+
+        Integer totalPrice = orderEntity.getTotalPrice().intValue();
+
+        razorpayService.refundPayment(orderEntity.getRazorpayPaymentId(), totalPrice * 100);
+
+        // Prepare final response
+        PurchaseOrderResponseDto responseDto = new PurchaseOrderResponseDto();
+        responseDto.setRazorpayOrderId(orderEntity.getRazorpayOrderId());
+        responseDto.setOrderTrackingNumber(orderEntity.getOrderTrackingNum());
+        responseDto.setOrderStatus(orderEntity.getOrderStatus());
+        responseDto.setPaymentStatus("REFUND-IN-PROGRESS");
+        return responseDto;
+    }
+
+    @Override
+    public List<OrderDto> getCustomerOrders(String customerEmail) {
+        List<OrderEntity> ordersList = orderRepo.findByCustomerEmail(customerEmail);
+        return ordersList.stream().map(OrderMapper::convertToDto).toList();
+    }
+
+    private String generateRandomTrackingNumber() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String timestamp = sdf.format(new Date());
+        String uuid = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+        return "OD" + timestamp + uuid;
+    }
+}package in.ashokit.service;
+
+import in.ashokit.dto.OrderDto;
+import in.ashokit.dto.PurchaseOrderRequestDto;
+import in.ashokit.dto.PurchaseOrderResponseDto;
+import in.ashokit.dto.UpdateOrderRequestDto;
+
+import java.util.List;
+
+public interface OrderService {
+
+    public PurchaseOrderResponseDto createOrder(PurchaseOrderRequestDto orderRequestDto) throws Exception;
+
+    public PurchaseOrderResponseDto updateOrder(UpdateOrderRequestDto updateOrderRequestDto)  throws  Exception;
+
+    public PurchaseOrderResponseDto cancelOrder(String orderTrackingNumber)  throws  Exception;
+
+    public List<OrderDto> getCustomerOrders(String customerEmail);
+
+}
+
+
+package in.ashokit.service;
+
+import com.razorpay.Order;
+import com.razorpay.RazorpayClient;
+import com.razorpay.Refund;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class RazorpayService {
+
+    @Value("${razorpay.key.id}")
+    private String keyId;
+
+    @Value("${razorpay.key.secret}")
+    private String keySecret;
+
+    private RazorpayClient razorpayClient;
+
+    public String createRazorpayOrder(Double amount) throws Exception {
+
+        this.razorpayClient = new RazorpayClient(keyId, keySecret);
+
+        JSONObject orderRequest = new JSONObject();
+
+        // Convert double amount to long (paisa) so no decimal points are sent to Razorpay
+        long amountInPaisa = Math.round(amount * 100);
+
+        orderRequest.put("amount", amountInPaisa); // Amount in paisa as integer
+        orderRequest.put("currency", "INR");
+        orderRequest.put("payment_capture", 1);
+
+        Order order = razorpayClient.Orders.create(orderRequest);
+
+        return order.get("id");
+    }
+
+    public String refundPayment(String razorpayPaymentId, Integer amount) throws Exception {
+
+        this.razorpayClient = new RazorpayClient(keyId, keySecret);
+
+        JSONObject refundRequest = new JSONObject();
+        refundRequest.put("amount", amount);
+
+        Refund refund = razorpayClient.Payments.refund(razorpayPaymentId, refundRequest);
+
+        return refund.toString();
+    }
+}package in.ashokit.repo;
+
+import in.ashokit.entity.OrderItemEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderItemRepo extends JpaRepository<OrderItemEntity, Integer> {
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.ProductEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ProductRepo extends JpaRepository<ProductEntity, Long> {
+
+    public List<ProductEntity> findByCategoryCategoryId(Long categoryId);
+    public List<ProductEntity> findByNameContainingIgnoreCase(String productName);
+
+
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.OrderEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface OrderRepo extends JpaRepository<OrderEntity, Integer> {
+
+    public OrderEntity findByOrderTrackingNum(String orderTrackingNum);
+
+    public List<OrderEntity> findByCustomerEmail(String email);
+
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.ShippingAddressEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+
+public interface ShippingAddressRepo extends JpaRepository<ShippingAddressEntity, Integer> {
+
+    // select * from shipping_addr where customer_id = ? and delete_sw=?
+    public List<ShippingAddressEntity> findByCustomerCustomerIdAndDeleteSw(Integer customerId, String deleteSw);
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.ProductCategoryEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductCategoryRepo extends JpaRepository<ProductCategoryEntity, Long> {
+}
+package in.ashokit.repo;
+
+import in.ashokit.entity.CustomerEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CustomerRepo extends JpaRepository<CustomerEntity, Integer> {
+
+    public CustomerEntity findByEmailAndPassword(String email, String pwd);
+
+    public CustomerEntity findByEmail(String email);
+
+}
+package in.ashokit.rest;
+
+import in.ashokit.dto.OrderDto;
+import in.ashokit.dto.PurchaseOrderRequestDto;
+import in.ashokit.dto.PurchaseOrderResponseDto;
+import in.ashokit.dto.UpdateOrderRequestDto;
+import in.ashokit.response.ApiResponse;
+import in.ashokit.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.OPTIONS})
+public class OrderRestController {
+
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping("/order")
+    public ResponseEntity<ApiResponse<PurchaseOrderResponseDto>> createOrder(@RequestBody PurchaseOrderRequestDto orderRequestDto) throws Exception {
+
+        ApiResponse<PurchaseOrderResponseDto> response = new ApiResponse<>();
+
+        PurchaseOrderResponseDto orderResponseDto = orderService.createOrder(orderRequestDto);
+
+        if (orderResponseDto != null) {
+            response.setStatus(201);
+            response.setMsg("Order Created");
+            response.setData(orderResponseDto);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } else {
+            response.setStatus(500);
+            response.setMsg("Order Failed");
+            response.setData(null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/order")
+    public ResponseEntity<ApiResponse<PurchaseOrderResponseDto>> updateOrder(@RequestBody UpdateOrderRequestDto orderRequestDto) throws Exception {
+
+        ApiResponse<PurchaseOrderResponseDto> response = new ApiResponse<>();
+        PurchaseOrderResponseDto orderResponseDto = orderService.updateOrder(orderRequestDto);
+
+        if (orderResponseDto != null) {
+            response.setStatus(200);
+            response.setMsg("Order Updated");
+            response.setData(orderResponseDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response.setStatus(500);
+            response.setMsg("Order Update Failed");
+            response.setData(null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/cancel-order/{orderTrackingNum}")
+    public ResponseEntity<ApiResponse<PurchaseOrderResponseDto>> cancelOrder(@PathVariable String orderTrackingNum) throws Exception {
+
+        ApiResponse<PurchaseOrderResponseDto> response = new ApiResponse<>();
+        PurchaseOrderResponseDto orderResponseDto = orderService.cancelOrder(orderTrackingNum);
+
+        if (orderResponseDto != null) {
+            response.setStatus(200);
+            response.setMsg("Order Cancelled");
+            response.setData(orderResponseDto);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response.setStatus(500);
+            response.setMsg("Order Cancel Failed");
+            response.setData(null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/customer-orders/{email}")
+    public ResponseEntity<ApiResponse<List<OrderDto>>> getOrders(@PathVariable String email) throws Exception {
+
+        ApiResponse<List<OrderDto>> response = new ApiResponse<>();
+        List<OrderDto> customerOrders = orderService.getCustomerOrders(email);
+
+        if (customerOrders != null && !customerOrders.isEmpty()) {
+            response.setStatus(200);
+            response.setMsg("Fetched Orders Successfully");
+            response.setData(customerOrders);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } else {
+            response.setStatus(500);
+            response.setMsg("Failed to fetch the orders");
+            response.setData(null);
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}

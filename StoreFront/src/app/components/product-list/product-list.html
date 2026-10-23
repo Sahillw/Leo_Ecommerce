@@ -1,0 +1,106 @@
+<div class="container-fluid" style="padding: 0">
+  <div
+    style="
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 24px;
+    "
+  >
+    <!-- Product Card Loop -->
+    <div
+      *ngFor="let tempProduct of products"
+      style="
+        background-color: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      "
+    >
+      <div>
+        <div
+          style="
+            height: 180px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+          "
+        >
+          <img
+            [src]="tempProduct.imageUrl"
+            style="max-height: 100%; max-width: 100%; object-fit: contain"
+          />
+        </div>
+
+        <h4
+          style="
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 10px 0 6px 0;
+            line-height: 1.3;
+          "
+        >
+          {{ tempProduct.name }}
+        </h4>
+
+        <div
+          style="
+            color: #0284c7;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+          "
+        >
+          {{ tempProduct.unitPrice | currency: "USD" }}
+        </div>
+      </div>
+
+      <button
+        (click)="addToCart(tempProduct)"
+        style="
+          background-color: #0f172a;
+          color: #ffffff;
+          width: 100%;
+          padding: 10px 0;
+          border: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background 0.2s ease;
+        "
+      >
+        Add to cart
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty Product Alert -->
+  <div
+    *ngIf="products && products.length === 0"
+    style="
+      width: 100%;
+      text-align: center;
+      padding: 60px 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+    "
+  >
+    <p style="font-size: 18px; color: #64748b; font-weight: 500; margin: 0">
+      No products available for this selection.
+    </p>
+  </div>
+</div>

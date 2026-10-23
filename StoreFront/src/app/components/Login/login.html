@@ -1,0 +1,69 @@
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Welcome Back</h2>
+      <p class="auth-subtitle">Please sign in to your customer account</p>
+    </div>
+
+    <!-- Alert Banners -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      <i class="bi bi-exclamation-circle-fill me-2"></i> {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      <i class="bi bi-check-circle-fill me-2"></i> {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <!-- Email Field -->
+      <div class="form-group mb-3">
+        <label for="email" class="form-label">Email Address</label>
+        <div class="input-icon-wrapper">
+          <input
+            type="email"
+            id="email"
+            class="form-control"
+            placeholder="e.g. john@example.com"
+            [(ngModel)]="credentials.email"
+            name="email"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group mb-4">
+        <label for="password" class="form-label"
+          >Password / Temporary Password</label
+        >
+        <div class="input-icon-wrapper">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Enter your password"
+            [(ngModel)]="credentials.password"
+            name="password"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary btn-submit w-100"
+        [disabled]="!loginForm.form.valid"
+      >
+        Sign In
+      </button>
+    </form>
+
+    <!-- Navigation Link -->
+    <div class="auth-footer text-center mt-4">
+      <p>
+        Don't have an account?
+        <a routerLink="/register" class="auth-link">Register Here</a>
+      </p>
+    </div>
+  </div>
+</div>
